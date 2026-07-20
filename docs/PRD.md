@@ -1,142 +1,49 @@
 # Product Requirements Document
 
+## Product
+
+Booking Platform for Service Businesses
+
 ## Problem Statement
 
-Most SMEs still manage appointments using:
+Many businesses still manage bookings using phone calls, WhatsApp, notebooks, or spreadsheets. Existing software is often expensive, complicated, or built for only one industry.
 
-- Phone calls
-- WhatsApp
-- Paper registers
-- Excel sheets
+Our goal is to build one flexible booking platform that works across multiple industries.
 
-This leads to:
+## Target Customers
 
-- Double bookings
-- No-shows
-- Missed appointments
-- Long waiting times
-- Poor customer experience
+- Salons
+- Clinics
+- Restaurants
+- Cafés
+- Spas
+- Gyms
+- Home Service Businesses
+- Sports Facilities
+- Coworking Spaces
 
----
+## Core Modules (MVP)
 
-## Goals
-
-Businesses should be able to:
-
-- Create services
-- Add staff/resources
-- Configure business hours
-- Accept appointments
-- Accept walk-ins
-- Check customers in
-- Manage queues
-- View today's schedule
-
----
-
-## Non Goals
-
-The product will NOT include:
-
-- Inventory
-- Payroll
-- Medical Records
-- Accounting
-- CRM
-- Marketing Automation
-
----
-
-## MVP Features
-
-### Authentication
-
-- Login
-- Signup
-
----
-
-### Organization
-
-- Business Profile
-- Time Zone
+- Authentication
+- Organizations
+- Customers
+- Resources
+- Services
+- Bookings
+- Walk-ins
+- Queue Management
 - Business Hours
-- Holidays
+- Dashboard
 
----
+## Future Modules
 
-### Resources
-
-Examples:
-
-- Barber
-- Doctor
-- Therapist
-- Table
-
----
-
-### Services
-
-Each service contains:
-
-- Name
-- Duration
-- Price (optional)
-- Assigned Resources
-
----
-
-### Booking
-
-Create
-
-Reschedule
-
-Cancel
-
-Confirm
-
-Check In
-
-Complete
-
-No Show
-
----
-
-### Queue
-
-Waiting
-
-Called
-
-In Progress
-
-Completed
-
-Cancelled
-
----
-
-### Dashboard
-
-Today's Bookings
-
-Today's Queue
-
-Upcoming Bookings
-
-No Shows
-
-Busy Resources
-
----
-
-## Success Metrics
-
-- Businesses onboarded
-- Monthly Active Businesses
-- Appointments Created
-- Appointment Completion Rate
-- No Show Rate
+- QR Check-in
+- QR Table Ordering
+- Home Service Booking
+- Delivery
+- Takeaway
+- Payments
+- Loyalty
+- Notifications
+- Analytics
+- AI Assistant

@@ -1,115 +1,60 @@
-# Database Design
+# Database Concepts
 
-## Multi Tenant
+## Organization
 
-Every record belongs to one Organization.
+A business using the platform.
 
-Organizations cannot access each other's data.
+Examples:
 
----
-
-## Tables
-
-### organizations
-
-- id
-- name
-- phone
-- email
-- timezone
-- created_at
+- Salon
+- Clinic
+- Restaurant
+- Gym
+- Spa
 
 ---
 
-### users
+## Resource
 
-- id
-- organization_id
-- name
-- email
-- role
-
----
-
-### customers
-
-- id
-- organization_id
-- name
-- phone
-- notes
-
----
-
-### resources
+Anything that can be reserved.
 
 Examples:
 
 - Barber
 - Doctor
-- Therapist
 - Table
-
-Fields
-
-- id
-- organization_id
-- name
-- status
+- Room
+- Court
 
 ---
 
-### services
+## Service
 
-- id
-- organization_id
-- name
-- duration
-- price
+What the customer books.
 
----
+Examples:
 
-### bookings
-
-- id
-- organization_id
-- customer_id
-- service_id
-- resource_id
-
-Statuses
-
-- Created
-- Confirmed
-- Checked In
-- Completed
-- Cancelled
-- Rescheduled
-- No Show
+- Haircut
+- Consultation
+- Beard Trim
+- Table Reservation
+- Court Booking
 
 ---
 
-### queue
+## Customer
 
-Statuses
-
-- Waiting
-- Called
-- In Progress
-- Completed
-- Cancelled
+The person making the booking.
 
 ---
 
-### business_hours
+## Booking
 
-- weekday
-- opens_at
-- closes_at
+Represents a reservation between a customer and one or more resources.
 
----
+Examples:
 
-### holidays
-
-- date
-- reason
+- Salon Appointment
+- Restaurant Reservation
+- Gym Session
+- Walk-in Queue

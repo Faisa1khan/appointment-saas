@@ -1,76 +1,33 @@
-# Vision
+# Booking Platform for Service Businesses
+
+## Vision
+
+Build a modern, multi-tenant booking platform that helps service businesses manage bookings, reservations, walk-ins, queues, and customer experiences from a single platform.
+
+The platform should support multiple industries while keeping the booking experience simple and fast.
+
+Examples include:
+
+- Salons & Barbers
+- Clinics & Hospitals
+- Restaurants & Cafés
+- Spas & Wellness Centers
+- Gyms & Fitness Studios
+- Sports Venues
+- Coworking Spaces
+- Any business that offers appointments or reservations
 
 ## Mission
 
-Build the simplest appointment and queue management platform for appointment-based businesses.
+Help businesses save time, reduce missed bookings, improve customer experience, and grow their business through a modern booking platform.
 
-Our goal is to help small and medium businesses replace paper registers, WhatsApp messages, phone calls, and spreadsheets with one modern platform.
+## Product Principles
 
----
-
-## Product Philosophy
-
-Simple over feature-rich.
-
-Fast over complicated.
-
-Affordable over enterprise.
-
-Mobile-first.
-
-Customer-first.
-
----
-
-## Who is it for?
-
-Appointment-based businesses including:
-
-- Salons
-- Clinics
-- Restaurants
-- Diagnostic Labs
-- Spas
-- Physiotherapy Clinics
-- Pet Grooming
-- Car Service Centers
-
----
-
-## Core Workflow
-
-Book
-
-↓
-
-Confirm
-
-↓
-
-Reminder
-
-↓
-
-Arrive
-
-↓
-
-Check In
-
-↓
-
-Queue
-
-↓
-
-Service
-
-↓
-
-Complete
-
----
-
-## Long-term Vision
-
-Become the default appointment platform for local businesses worldwide.
+- Mobile First
+- Multi Tenant
+- Easy Setup
+- Beautiful UI
+- Fast Performance
+- Scalable Architecture
+- API First
+- Extensible for Future Modules

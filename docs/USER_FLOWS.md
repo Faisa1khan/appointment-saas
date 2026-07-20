@@ -1,133 +1,93 @@
 # User Flows
 
-## Appointment Booking
+## Salon
 
-Customer
-
+Book Service
 ↓
 
-Select Service
-
-↓
-
-Select Date
-
-↓
-
-Select Time
-
-↓
-
-Booking Created
-
-↓
-
-Confirmation Sent
-
-↓
-
-Reminder
-
-↓
-
-Customer Arrives
-
+Confirmation
 ↓
 
 Check In
-
-↓
-
-Queue
-
-↓
-
-Resource Starts Service
-
-↓
-
-Completed
-
----
-
-## Walk In
-
-Customer Arrives
-
-↓
-
-Reception
-
-↓
-
-Select Service
-
-↓
-
-Assign Resource
-
-↓
-
-Queue
-
 ↓
 
 Service
-
 ↓
 
-Completed
+Complete
 
 ---
 
-## Reschedule
+## Restaurant
 
-Existing Booking
-
+Reserve Table
 ↓
 
-Select New Slot
-
+Arrival
 ↓
 
-Confirm
-
+Seat Customer
 ↓
 
-Reminder Updated
+Future:
+QR Scan
+↓
+
+Order Food
+↓
+
+Payment
 
 ---
 
-## Cancellation
+## Walk-in
 
-Booking
-
+Walk In
 ↓
 
-Cancel
-
+Join Queue
 ↓
 
-Slot Becomes Available
+Assign Resource
+↓
+
+Service
+↓
+
+Complete
 
 ---
 
-## No Show
+# Future
 
-Appointment Time
+## Home Service
 
+Book Service
 ↓
 
-Grace Period Ends
-
+Assign Technician
 ↓
 
-Not Checked In
-
+Travel
 ↓
 
-Marked as No Show
-
+Service
 ↓
 
-Slot Closed
+Complete
+
+## Delivery
+
+Order
+↓
+
+Assign Rider
+↓
+
+Pickup
+↓
+
+Delivery
+↓
+
+Complete

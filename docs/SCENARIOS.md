@@ -1,75 +1,51 @@
-# Edge Cases
+# Scenarios
 
 ## Booking
 
-- Double booking
-- Booking outside business hours
-- Booking on holiday
-- Booking in the past
-- Invalid duration
-
----
-
-## Resources
-
-- Staff on leave
-- Staff resigned
-- Staff unavailable
-- Resource disabled
-
----
-
-## Customer
-
-- Customer late
-- Customer never arrives
+- Customer books online
+- Customer reschedules
 - Customer cancels
-- Customer requests reschedule
+- Customer arrives late
+- Customer is a no-show
 
 ---
 
-## Queue
+## Walk-ins
 
-- Walk-in while queue is full
-- Customer leaves queue
-- Customer skipped
-- Priority customer
+- Walk-in customer
+- Queue full
+- Resource unavailable
+
+---
+
+## Restaurant
+
+- Table occupied
+- Reservation expires
+- Walk-in table assignment
+- QR code unavailable
 
 ---
 
 ## Business
 
-- Closed today
+- Holiday
+- Staff leave
 - Emergency closure
-- Internet unavailable
-- Power failure
+- Double booking attempt
 
 ---
 
-## Time
+# Future
 
-- Different time zones
-- Daylight Saving Time
-- UTC storage
+## Home Service
 
----
+- Technician delayed
+- Customer unavailable
+- Address changed
 
-## No Show
+## Delivery
 
-Customer does not arrive.
-
-System should:
-
-- Allow manual No Show
-- Support automatic No Show after configurable grace period
-- Record customer history
-- Free the resource for later appointments
-
----
-
-## Future
-
-- Online Payments
-- QR Check In
-- Google Calendar Sync
-- WhatsApp Reminders
+- Rider unavailable
+- Delivery delayed
+- Customer unreachable
