@@ -383,3 +383,150 @@ We integrated Supabase into our Next.js application by installing `@supabase/sup
 - `@supabase/ssr` connects Next.js server runtime with Supabase Auth via HTTP cookies.
 - Environment variables isolate secrets, ensuring client-safe keys remain distinct from superuser keys.
 
+---
+
+# Story: E0-S3 - Configure Drizzle ORM
+
+## Date
+
+2026-07-21
+
+## Objective
+
+Establish the core database schema layer and migration pipeline using Drizzle ORM, TypeScript schema definitions, and Drizzle Kit matching `docs/DATABASE.md`.
+
+---
+
+## Prerequisites
+
+- Relational Database Management Systems (RDBMS) & PostgreSQL fundamentals.
+- Understanding of Object-Relational Mapping (ORM) vs. Schema-first query builders.
+- SQL DDL (Data Definition Language): Tables, Primary Keys, Foreign Keys, Indexes, Constraints, and Enums.
+
+---
+
+## What We Built
+
+We configured Drizzle ORM and Drizzle Kit inside `apps/web`:
+- **`apps/web/lib/db/schema.ts`**: Implemented TypeScript table definitions for all 10 core entities (`organizations`, `organization_members`, `customers`, `services`, `resources`, `business_hours`, `business_closures`, `resource_schedules`, `bookings`, `booking_services`) plus Supabase `auth.users` reference, 3 PostgreSQL Enums (`booking_source`, `booking_status`, `member_role`), indexes, unique constraints, and check constraints matching `docs/DATABASE.md`.
+- **`apps/web/lib/db/index.ts`**: Created a reusable, type-safe database client using `drizzle-orm/postgres-js` with serverless-safe prefetch settings.
+- **`apps/web/drizzle.config.ts`**: Configured migration pipeline targeting PostgreSQL with outputs sent to `./drizzle/migrations`.
+- **`apps/web/package.json`**: Added scripts (`db:generate`, `db:migrate`, `db:push`, `db:studio`).
+- **Initial Migration**: Generated `0000_true_fallen_one.sql` via `pnpm db:generate`.
+
+---
+
+## Why We Built It This Way
+
+**TypeScript-First Schema:** Defining database tables using Drizzle ORM in TypeScript ensures end-to-end type safety between database columns and application code, catching schema mismatches at compile time rather than runtime.
+
+**Schema-First Documentation Alignment:** `docs/DATABASE.md` is our authoritative database contract. Writing explicit check constraints (`CHECK (end_time > start_time)`, `CHECK (phone IS NOT NULL OR email IS NOT NULL)`), cascading foreign keys, and indexes directly into Drizzle ensures database-level integrity enforced by PostgreSQL.
+
+**Declarative Migration Pipeline:** Drizzle Kit automatically diffs the TypeScript schema against previous migrations to generate deterministic SQL migration files (`.sql`), preventing manual SQL errors in production environments.
+
+---
+
+## Architecture Decisions
+
+- **Decision:** Use `drizzle-orm/postgres-js` for database connection.
+  - **Reason:** `postgres.js` is extremely fast, lightweight, and supports connection pooling and serverless environments cleanly with `prepare: false`.
+  - **Trade-offs:** Requires direct connection parameters or connection poolers (e.g. Supabase Transaction Pooler).
+- **Decision:** Refer to Supabase `auth.users` via `pgSchema('auth').table('users', ...)`.
+  - **Reason:** Supabase Auth owns user records in the `auth` schema. Linking foreign keys to `auth.users` maintains referential integrity while respecting schema isolation.
+
+---
+
+## Concepts to Master
+
+### ORM vs Query Builder
+- **What it is:** Traditional ORMs map database rows to heavy class objects. Drizzle acts as a lightweight, type-safe SQL query builder where SQL concepts map 1-to-1 with TypeScript code.
+- **Why Arrivo uses Drizzle:** Zero abstraction overhead, instant startup times, serverless compatibility, and automatic TypeScript type inference (`InferSelectModel`, `InferInsertModel`).
+
+### Migrations Pipeline
+- **`pnpm db:generate`**: Compares `schema.ts` against existing migration files and generates a new `.sql` file.
+- **`pnpm db:migrate`**: Applies unapplied `.sql` migration files to the target database in order.
+- **`pnpm db:push`**: Directly pushes schema changes to the database without generating migration files (useful for fast prototyping in local dev).
+
+---
+
+## Vocabulary
+
+- **Migration:** A versioned file containing SQL DDL statements that transition a database schema from one state to another.
+- **Foreign Key Cascade (`ON DELETE CASCADE`):** A constraint action that automatically deletes child records when their parent record is deleted.
+- **Snapshot Record (`ON DELETE SET NULL`):** A foreign key configuration that preserves historical records (e.g., `booking_services`) by setting the foreign key column to NULL if the original entity (e.g., `service`) is deleted.
+
+---
+
+## Files to Study
+
+- **`apps/web/lib/db/schema.ts`**: The single source of truth for database table definitions and enums.
+- **`apps/web/lib/db/index.ts`**: Reusable database connection client.
+- **`apps/web/drizzle.config.ts`**: Drizzle Kit configuration file.
+- **`apps/web/drizzle/migrations/0000_true_fallen_one.sql`**: Generated SQL DDL migration.
+
+---
+
+## Technologies Introduced
+
+- **`drizzle-orm`**: TypeScript ORM for SQL databases.
+- **`drizzle-kit`**: CLI tool for schema management, migrations, and Drizzle Studio GUI.
+- **`postgres` (postgres.js)**: Fast PostgreSQL client driver for Node.js/TypeScript.
+
+---
+
+## Best Practices
+
+- Always update `docs/DATABASE.md` BEFORE modifying `apps/web/lib/db/schema.ts`.
+- Always inspect generated SQL files in `drizzle/migrations/` before running migrations.
+- Use `prepare: false` on `postgres.js` when connecting to connection poolers or serverless runtimes.
+
+---
+
+## Common Mistakes
+
+- **Editing Production Databases Manually:** Bypasses migration tracking and breaks schema sync across team environments.
+- **Missing `CHECK` Constraints:** Relying solely on frontend validation allows invalid data state to persist if an API request bypasses the client.
+
+---
+
+## Where This Will Be Used
+
+- **All Epics:** All data fetching, mutations, background jobs, and backend queries across Arrivo will query tables defined in `schema.ts` via `db`.
+
+---
+
+## Common Interview Questions
+
+**Q: Why use Drizzle ORM over Prisma in Next.js App Router?**
+**A:** Drizzle is significantly lighter (no heavy Rust binary execution), has faster cold-start performance in serverless environments, uses standard SQL syntax instead of a custom DSL, and generates lightweight JavaScript bundles.
+
+---
+
+## Exercises
+
+1. **Inspect Generated SQL:** Open `apps/web/drizzle/migrations/0000_true_fallen_one.sql` and trace how Drizzle translated `check()` and `uniqueIndex()` helper functions into raw PostgreSQL DDL code.
+
+---
+
+## Further Reading
+
+- [Drizzle ORM Documentation](https://orm.drizzle.team/docs/overview)
+- [Drizzle Kit Migrations Guide](https://orm.drizzle.team/docs/migrations)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+
+---
+
+## Revision Checklist
+
+- [ ] I can explain what Drizzle ORM is and why Arrivo uses it.
+- [ ] I understand how to define tables, foreign keys, indexes, and enums in Drizzle.
+- [ ] I can execute `pnpm db:generate` to produce SQL migration files.
+
+---
+
+## Key Takeaways
+
+- Drizzle provides type-safe, performance-optimized database access for Arrivo.
+- Database schema in `lib/db/schema.ts` strictly reflects `docs/DATABASE.md`.
+
+
