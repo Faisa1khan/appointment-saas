@@ -212,3 +212,174 @@ This story prepares the technical foundation for:
 - Next.js App Router heavily leverages React Server Components; default to server rendering and only use `"use client"` when necessary.
 - We own our UI components via shadcn/ui, giving us maximum control over Arrivo's styling.
 - Extracted client providers (`ThemeProvider`) keep our root layout clean and server-rendered.
+
+---
+
+# Story: E0-S2 - Configure Supabase Project
+
+## Date
+
+2026-07-21
+
+## Objective
+
+Configure Supabase as the backend infrastructure provider and establish a secure, server-aware Supabase client architecture in Next.js 15 using `@supabase/supabase-js` and `@supabase/ssr`.
+
+---
+
+## Prerequisites
+
+- Next.js 15 App Router concepts (Server Components, Client Components, Middleware).
+- Basic understanding of HTTP cookies and HTTP request/response lifecycles.
+- Fundamentals of relational databases (PostgreSQL) and Auth concepts (JWTs, Sessions).
+
+---
+
+## What We Built
+
+We integrated Supabase into our Next.js application by installing `@supabase/supabase-js` and `@supabase/ssr`. We created standard environment variable templates (`.env.example`) and established a modular, environment-aware Supabase client structure in `apps/web/lib/supabase/`:
+- **`client.ts`**: Instantiates a browser-side Supabase client (`createBrowserClient`) for interactive Client Components.
+- **`server.ts`**: Instantiates a server-side Supabase client (`createServerClient`) configured to read and mutate cookies using Next.js `cookies()` helper for Server Components, Server Actions, and Route Handlers.
+- **`middleware.ts`**: Utility function (`updateSession`) to refresh Supabase auth tokens on incoming HTTP requests.
+- **`middleware.ts` (Next.js Root)**: Invokes `updateSession` to ensure user sessions remain fresh and consistent across requests.
+
+---
+
+## Why We Built It This Way
+
+**`@supabase/ssr` Package:** In Next.js App Router, server-rendered components and middleware run on the server where browser `localStorage` does not exist. Using `@supabase/ssr` ensures auth tokens are stored securely in HTTP cookies, enabling Server Components, Route Handlers, and Middleware to access the authenticated user state seamlessly.
+
+**Separation of Client Concerns:** Providing dedicated `createClient` helpers for browser (`client.ts`) and server (`server.ts`) contexts prevents accidental usage of server cookie functions in the browser or trying to access browser APIs on the server.
+
+**Non-Blocking Middleware Session Refresh:** The middleware checks and refreshes auth tokens before requests reach components, preventing expired session tokens while keeping routes open and unrestricted at this stage.
+
+---
+
+## Architecture Decisions
+
+- **Decision:** Use `@supabase/ssr` instead of managing custom cookie adapters or using legacy helper libraries (`@supabase/auth-helpers-nextjs`).
+  - **Reason:** `@supabase/ssr` is the official modern standard for Supabase with Next.js App Router and React 19.
+  - **Trade-offs:** Requires careful handling of cookie get/set methods across Server Components and Middleware.
+  - **Alternatives considered:** `@supabase/auth-helpers-nextjs` (deprecated in favor of `@supabase/ssr`).
+- **Decision:** Separate client creation into `client.ts`, `server.ts`, and `middleware.ts`.
+  - **Reason:** Isolates execution environments to enforce proper Next.js security and data lifecycle patterns.
+
+---
+
+## Concepts to Master
+
+### What is Supabase?
+- **What it is:** An open-source Backend-as-a-Service (BaaS) built on top of PostgreSQL. It provides managed Postgres databases, authentication services, row-level security (RLS), real-time subscriptions, edge functions, and object storage.
+- **Why Arrivo uses Supabase:** Arrivo relies on Supabase for enterprise-grade PostgreSQL hosting, built-in Auth, robust Row Level Security (RLS) for multi-tenancy, and scalable storage without needing to manage infrastructure manually.
+
+### Browser vs Server Clients
+- **Browser Client (`client.ts`):** Used inside Client Components (`"use client"`). Runs in the browser DOM and relies on browser APIs.
+- **Server Client (`server.ts`):** Used in Server Components, Server Actions, and Route Handlers. Runs strictly on the server and reads/writes cookies using Next.js `cookies()` API.
+
+### Why Middleware is Required
+- **Session Persistence & Token Refresh:** Because JWT access tokens expire periodically, Next.js middleware intercepting incoming requests allows Supabase to validate and refresh authentication tokens using refresh tokens before Server Components execute.
+- **Server Component Cookie Limitations:** Next.js Server Components cannot set or modify cookies directly during rendering. Middleware acts as the entry point where cookie headers can be read, updated, and sent back in the HTTP response.
+
+### Environment Variables & Keys
+- **`NEXT_PUBLIC_SUPABASE_URL`:** The public HTTPS endpoint of the Supabase project. Accessible to both client and server.
+- **`NEXT_PUBLIC_SUPABASE_ANON_KEY`:** The anonymous public API key. Safe to expose in the browser. Access is restricted by database Row Level Security (RLS) policies.
+- **`SUPABASE_SERVICE_ROLE_KEY`:** Secret admin key with full superuser privileges, bypassing all RLS rules. Must **NEVER** be exposed to the client or committed to source control.
+
+### How Authentication Sessions Work
+- Supabase Auth issues JSON Web Tokens (JWTs) containing user claims.
+- Tokens are stored in secure HTTP cookies handled by `@supabase/ssr`.
+- Every request carries these cookies to the server. Middleware validates the token with Supabase and refreshes it if needed, passing updated cookies back to the user's browser.
+
+---
+
+## Vocabulary
+
+- **BaaS (Backend-as-a-Service):** A cloud service model providing developers with server-side infrastructure (auth, database, storage) via APIs.
+- **Anon Key (Anonymous Key):** A public API key intended for client-side API requests subject to Row Level Security.
+- **Service Role Key:** A privileged server-only API key that bypasses Row Level Security.
+- **JWT (JSON Web Token):** A compact, URL-safe means of representing claims to be transferred between two parties.
+- **Refresh Token:** A long-lived credential used to obtain new access tokens without requiring the user to re-enter credentials.
+
+---
+
+## Files to Study
+
+- **`apps/web/lib/supabase/client.ts`**: Browser client factory function using `createBrowserClient`.
+- **`apps/web/lib/supabase/server.ts`**: Server client factory function integrating Next.js `cookies()` with `createServerClient`.
+- **`apps/web/lib/supabase/middleware.ts`**: Session update utility (`updateSession`) handling auth token refreshing.
+- **`apps/web/middleware.ts`**: Root Next.js middleware file routing requests through `updateSession`.
+- **`apps/web/.env.example`**: Documentation of required environment variable keys.
+
+---
+
+## Technologies Introduced
+
+- **`@supabase/supabase-js`**: Core Supabase JavaScript SDK for database, auth, and storage interactions.
+- **`@supabase/ssr`**: Supabase package for cookie-based auth session management across SSR frameworks.
+
+---
+
+## Best Practices
+
+- Always use `client.ts` in Client Components and `server.ts` in Server Components / Actions / Route Handlers.
+- Never expose `SUPABASE_SERVICE_ROLE_KEY` to any file evaluated on the client (never prefix with `NEXT_PUBLIC_`).
+- Keep `.env.example` updated with necessary environment variable names without real secret values.
+- Rely on Middleware for token refresh rather than attempting to set cookies within Server Component render passes.
+
+---
+
+## Common Mistakes
+
+- **Importing `server.ts` in a Client Component:** Causes runtime errors because Next.js `cookies()` header utilities are not available in browser runtime.
+- **Exposing Service Role Key:** Accidental usage of `SUPABASE_SERVICE_ROLE_KEY` on the frontend bypasses RLS and compromises the entire database.
+- **Forgetting Middleware Matcher Exclusions:** Running middleware on static assets (`_next/static`, images) degrades site performance.
+
+---
+
+## Where This Will Be Used
+
+- **Epic 1 (Auth & Onboarding):** Sign up, login, logout, and session checks will use these clients.
+- **Epic 2+ (Database Operations):** Drizzle ORM and Supabase queries will use connection configs verified here.
+
+---
+
+## Common Interview Questions
+
+**Q: Why do we need `@supabase/ssr` instead of `@supabase/supabase-js` alone in Next.js App Router?**
+**A:** Standard `@supabase/supabase-js` uses `localStorage` by default to persist auth tokens, which is unavailable during Server-Side Rendering (SSR). `@supabase/ssr` stores tokens in HTTP cookies, allowing Server Components and Middleware to read the user session on the server.
+
+**Q: What is the difference between Supabase Anon Key and Service Role Key?**
+**A:** The Anon Key is safe to distribute to browsers because database access is strictly governed by PostgreSQL Row Level Security (RLS) policies. The Service Role Key bypasses all RLS checks entirely and grants full database access; it must remain secret on the server.
+
+---
+
+## Exercises
+
+1. **Verify Client Instantiation:** Import `createClient` from `@/lib/supabase/client` in a test page and log `supabase.auth`. Observe that client instantiation completes without errors.
+2. **Inspect Cookies:** In browser dev tools, view the Storage -> Cookies tab after initializing a session to trace how auth tokens are stored.
+
+---
+
+## Further Reading
+
+- [Supabase SSR Docs for Next.js](https://supabase.com/docs/guides/auth/server-side/nextjs)
+- [Supabase Auth Overview](https://supabase.com/docs/guides/auth)
+- [Next.js Middleware Documentation](https://nextjs.org/docs/app/building-your-application/routing/middleware)
+
+---
+
+## Revision Checklist
+
+- [ ] I can explain what Supabase is and why Arrivo uses it.
+- [ ] I understand the difference between browser and server Supabase clients.
+- [ ] I know why middleware is required for auth session refresh in Next.js App Router.
+- [ ] I can differentiate between `NEXT_PUBLIC_SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY`.
+
+---
+
+## Key Takeaways
+
+- Supabase provides Arrivo's backend infrastructure (Postgres, Auth, Storage, RLS).
+- `@supabase/ssr` connects Next.js server runtime with Supabase Auth via HTTP cookies.
+- Environment variables isolate secrets, ensuring client-safe keys remain distinct from superuser keys.
+
