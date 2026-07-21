@@ -168,6 +168,14 @@ For every completed story, the agent MUST:
 
 ---
 
+# Progress Tracking
+
+After every completed story, update `docs/PROGRESS.md` before stopping.
+
+`docs/PROGRESS.md` is the authoritative record of implementation progress across all epics and stories.
+
+---
+
 # Documentation Priority
 
 Documentation is the source of truth.
@@ -205,10 +213,11 @@ Every completed story MUST follow this order:
 3. Fix all issues.
 4. Update affected documentation.
 5. Update `docs/LEARNING.md`.
-6. Perform a self-review.
-7. Summarize the implementation.
-8. Suggest a Conventional Commit message.
-9. Stop and wait for my review.
+6. Update `docs/PROGRESS.md`.
+7. Perform a self-review.
+8. Summarize the implementation.
+9. Suggest a Conventional Commit message.
+10. Stop and wait for my review.
 
 Never continue to the next story automatically.
 
@@ -250,3 +259,4 @@ A story is NOT considered complete until:
 - [ ] Self-review completed.
 - [ ] Relevant documentation has been updated (if required).
 - [ ] `docs/LEARNING.md` has been updated with a new entry following the Learning Workflow.
+- [ ] `docs/PROGRESS.md` has been updated following the Progress Rules.
