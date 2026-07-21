@@ -54,6 +54,21 @@
 - Free tier: first 1,000 conversations/month per WhatsApp Business Account.
 - Required env vars: `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_ACCESS_TOKEN`, `META_WEBHOOK_VERIFY_TOKEN`
 
+## Testing
+
+| Layer | Tool | Notes |
+|---|---|---|
+| Unit Testing | Vitest | Fast TypeScript unit tests |
+| Component Testing | React Testing Library | Test React components |
+| End-to-End Testing | Playwright | Browser automation and end-to-end testing |
+
+## Code Quality
+
+| Layer | Tool | Notes |
+|---|---|---|
+| Linting | ESLint | Code quality and best practices |
+| Formatting | Prettier | Consistent code formatting |
+
 ## Deployment
 
 | Layer | Tool | Notes |
