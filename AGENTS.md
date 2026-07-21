@@ -12,47 +12,11 @@ Generic Multi-Tenant Appointment Booking SaaS
 
 ---
 
-# Tech Stack
+# Technology Stack
 
-Frontend
+The project's technology stack is defined in `docs/STACK.md`.
 
-- Next.js 15 (App Router)
-- React 19
-- TypeScript
-- Tailwind CSS v4
-- shadcn/ui
-- React Hook Form
-- Zod
-
-Backend
-
-- Next.js Route Handlers
-- Server Actions where appropriate
-
-Database
-
-- PostgreSQL
-- Supabase
-
-Authentication
-
-- Supabase Auth
-
-ORM
-
-- Drizzle ORM
-
-Validation
-
-- Zod
-
-Deployment
-
-- Vercel
-
-Package Manager
-
-- pnpm
+Do not introduce new libraries, frameworks, or architectural patterns without approval.
 
 ---
 
@@ -143,31 +107,146 @@ Never optimize prematurely.
 
 ---
 
-# Before Writing Code
+# Implementation Workflow
 
-Verify:
+Before implementing any story:
 
-- Is the feature documented?
-- Does it match the architecture?
-- Does it follow the database design?
-- Does it follow the business rules?
+1. Read `AGENTS.md`.
+2. Read the story requirements.
+3. Read only the documentation relevant to the current story.
+4. If documentation is missing, unclear, or inconsistent, STOP and report the issue.
+5. Implement ONLY the current story.
+6. If documentation and implementation conflict, documentation wins.
+7. Never introduce new libraries, frameworks, or architectural patterns without approval.
 
-If not, update the documentation first.
+---
+
+# Scope Control
+
+Implement ONLY the requested story.
+
+Do not:
+
+- Refactor unrelated code.
+- Upgrade dependencies.
+- Add features from future stories.
+- Introduce new libraries.
+- Change architecture without approval.
+
+---
+
+# Learning Workflow
+
+Learning is part of the project's Definition of Done.
+
+For every completed story, the agent MUST:
+
+1. Update `docs/LEARNING.md`.
+2. Append a new learning entry for the completed story.
+3. Never overwrite previous learning entries.
+4. Follow the standard Learning Journal template.
+5. Explain concepts from first principles.
+6. Use examples from the Arrivo codebase whenever possible.
+7. Explain not only *what* was implemented, but also *why* it was implemented that way.
+8. Include:
+   - Objective
+   - What We Built
+   - Why We Built It This Way
+   - Concepts to Master
+   - Vocabulary
+   - Files to Study
+   - Technologies Introduced
+   - Best Practices
+   - Common Mistakes
+   - Architecture Decisions
+   - Where This Will Be Used
+   - Common Interview Questions
+   - Exercises
+   - Further Reading
+   - Revision Checklist
+   - Key Takeaways
+
+---
+
+# Documentation Priority
 
 Documentation is the source of truth.
 
+When implementing a story:
 
-# Implementation Workflow
+- Read the relevant documentation before writing code.
+- If implementation conflicts with documentation, STOP and report the conflict.
+- Never silently change architecture or design decisions.
+- Any architectural change must first update the appropriate documentation before implementation continues.
 
-Before implementing any feature, follow this order:
+---
 
-1. Read AGENTS.md
-2. Read STACK.md
-3. Read ARCHITECTURE.md
-4. Read PRD.md
-5. Read DATABASE.md
-6. Read API.md
-7. Read USER_FLOWS.md
-8. Implement the feature
-9. If documentation and code conflict, documentation wins.
-10. Never introduce new libraries or architectural patterns without approval.
+# Quality Gates
+
+A story cannot be completed unless:
+
+- Lint passes.
+- Type checking passes.
+- Build passes (when applicable).
+
+Never ignore failing quality checks.
+
+---
+
+# Story Completion Workflow
+
+Every completed story MUST follow this order:
+
+1. Implement only the current story.
+2. Run:
+   - lint
+   - typecheck
+   - build (when applicable)
+3. Fix all issues.
+4. Update affected documentation.
+5. Update `docs/LEARNING.md`.
+6. Perform a self-review.
+7. Summarize the implementation.
+8. Suggest a Conventional Commit message.
+9. Stop and wait for my review.
+
+Never continue to the next story automatically.
+
+---
+
+# Git Workflow
+
+For every completed story:
+
+- Stage only the files related to that story.
+- Suggest a Conventional Commit message.
+- Do not commit automatically.
+- Wait for my approval before committing.
+- Do not start the next story until the current story has been reviewed and committed.
+
+---
+
+# Goal
+
+Every story should be:
+
+- Documented
+- Implemented
+- Verified
+- Learned
+- Reviewed
+- Ready to Commit
+
+Only proceed to the next story after my approval.
+
+## Definition of Done
+
+A story is NOT considered complete until:
+
+- [ ] Requirements are implemented.
+- [ ] Lint passes.
+- [ ] Type checking passes.
+- [ ] Build passes (when applicable).
+- [ ] Self-review completed.
+- [ ] Relevant documentation has been updated (if required).
+- [ ] `docs/LEARNING.md` has been updated with a new entry following the Learning Workflow.
