@@ -529,4 +529,142 @@ We configured Drizzle ORM and Drizzle Kit inside `apps/web`:
 - Drizzle provides type-safe, performance-optimized database access for Arrivo.
 - Database schema in `lib/db/schema.ts` strictly reflects `docs/DATABASE.md`.
 
+---
 
+# Story: E0-S4 - Enable Row Level Security (RLS)
+
+## Date
+
+2026-07-22
+
+## Objective
+
+Enable PostgreSQL Row Level Security (RLS) for all tenant-scoped tables and implement secure, least-privilege access policies using Supabase Auth to ensure users can only access data belonging to organizations they are members of.
+
+---
+
+## Prerequisites
+
+- Relational Database Management Systems (RDBMS) & PostgreSQL fundamentals.
+- Supabase Authentication and JWT claims.
+- PostgreSQL Row Level Security (RLS) and policies.
+
+---
+
+## What We Built
+
+We created a custom SQL migration file to enable Row Level Security on the 10 tenant-scoped tables. We implemented strict RLS policies to enforce tenant boundaries:
+- Added a `SECURITY DEFINER` helper function `is_org_member(org_id)` to centralize and simplify the verification of whether the currently authenticated user (`auth.uid()`) belongs to an organization.
+- Applied `SELECT`, `INSERT`, `UPDATE`, and `DELETE` policies to tenant-scoped tables, leveraging this helper function.
+- Allowed public `SELECT` access to `services`, `resources`, `business_hours`, `business_closures`, and `resource_schedules` to support the public booking engine, as specified in the database architecture.
+- Delegated the creation of organizations and initial membership assignment to the backend using the Supabase Service Role key (which bypasses RLS), ensuring regular users cannot arbitrarily insert themselves into organizations via SQL.
+
+---
+
+## Why We Built It This Way
+
+**Centralized Membership Logic:** Creating the `is_org_member` function abstracts the complex `EXISTS` subquery. This makes our RLS policies cleaner, easier to audit, and much easier to modify in the future if our authorization model evolves.
+
+**Service Role for Organization Creation:** Since an organization does not exist before a user creates it, the user cannot be a "member" of it yet to satisfy an RLS policy. By using the Service Role key in a secure backend context (like a Server Action or API Route), we bypass RLS safely during this initial provisioning step without opening up `INSERT` access to all authenticated users.
+
+**Public Read Policies:** A core requirement of the platform is allowing guest users to view availability and services on public booking pages. If we restricted everything to authenticated members, guests couldn't see anything. Thus, `services`, `resources`, and scheduling tables have public `SELECT` access while keeping mutations strictly protected.
+
+---
+
+## Architecture Decisions
+
+- **Decision:** Use a custom PostgreSQL function for membership checks (`is_org_member`).
+  - **Reason:** Simplifies RLS policies, reduces boilerplate, and provides a single source of truth for authorization checks in the database.
+- **Decision:** Do not create `INSERT` RLS policies for `organizations`.
+  - **Reason:** Creation of organizations will be securely handled by the backend using the Service Role key, bypassing RLS.
+
+---
+
+## Concepts to Master
+
+### Row Level Security (RLS)
+- **What it is:** A PostgreSQL feature that allows database administrators to define policies that restrict which rows can be returned by `SELECT` queries or affected by `INSERT`, `UPDATE`, and `DELETE` commands.
+- **Why Arrivo uses it:** To guarantee multi-tenancy boundaries at the database level. Even if an API endpoint forgets to filter by `organization_id`, the database will prevent the leak.
+
+### Security Definer Functions
+- **What it is:** A PostgreSQL function modifier that executes the function with the privileges of the user who created it, rather than the user calling it.
+- **Why we need it:** When policies query other tables (like `organization_members`) that are also RLS-protected, it can cause infinite recursion or privilege issues. `SECURITY DEFINER` (or careful policy structuring) bypasses this cleanly for administrative lookups.
+
+---
+
+## Vocabulary
+
+- **Tenant:** A single organization or business using the SaaS platform.
+- **Row Level Security (RLS):** Database-level security policies that restrict data access per row based on the session's context (e.g., the authenticated user).
+- **Service Role Key:** A Supabase admin key that circumvents RLS entirely.
+
+---
+
+## Files to Study
+
+- **`apps/web/drizzle/migrations/0001_enable_rls.sql`**: The custom SQL migration containing the `is_org_member` function and all policy definitions.
+
+---
+
+## Technologies Introduced
+
+- **PostgreSQL RLS Policies**: Native database feature to secure data at the row level.
+
+---
+
+## Best Practices Learned
+
+- **Extract Repeated Logic:** Move repeated, complex SQL subqueries in RLS policies into helper functions to improve readability and maintainability.
+- **Defense in Depth:** Enforce security constraints (like tenant isolation) in the database via RLS, not just in the application code. This provides a hard safety net against developer errors.
+
+---
+
+## Common Mistakes
+
+- **Infinite Recursion in RLS:** Writing an RLS policy on table A that queries table A, or querying table B which has a policy that queries table A.
+- **Exposing the Service Role Key:** The Service Role key bypasses all the careful RLS policies we just wrote. It must never leak to the client.
+
+---
+
+## Where This Will Be Used
+
+- **All Data Access:** Every single query the frontend or user-facing APIs make to the database will implicitly pass through these RLS policies.
+
+---
+
+## Common Interview Questions
+
+**Q: How does Row Level Security (RLS) differ from traditional table-level permissions?**
+**A:** Traditional permissions (GRANT/REVOKE) restrict access to entire tables (e.g., "User A can read the `customers` table"). RLS restricts access to specific rows within those tables based on conditions (e.g., "User A can only read rows in `customers` where `organization_id` matches their membership").
+
+**Q: Why use a helper function in RLS policies?**
+**A:** It reduces redundancy, makes policies easier to audit, and centralizes authorization logic. If the definition of a "member" changes, we only need to update the function, not every single policy across the database.
+
+---
+
+## Exercises
+
+1. **Review Policies:** Read through `apps/web/drizzle/migrations/0001_enable_rls.sql` and identify which operations are allowed for anonymous users versus authenticated members.
+
+---
+
+## Further Reading
+
+- [Supabase Row Level Security Guide](https://supabase.com/docs/guides/auth/row-level-security)
+- [PostgreSQL RLS Documentation](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
+
+---
+
+## Revision Checklist
+
+- [ ] I can explain what Row Level Security (RLS) is and why it's critical for multi-tenant SaaS.
+- [ ] I can describe the difference between public access and authenticated-member access in our schema.
+- [ ] I understand why the `organizations` table relies on the Service Role key for `INSERT` operations.
+
+---
+
+## Key Takeaways
+
+- RLS provides database-level isolation between tenants.
+- Helper functions simplify RLS management.
+- The `service_role` key is essential for securely bypassing RLS during initial provisioning (like creating organizations).
