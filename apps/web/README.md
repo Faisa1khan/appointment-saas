@@ -92,8 +92,29 @@ cp .env.example .env.local
 | `WHATSAPP_TEMPLATE_NAME` | Yes | WhatsApp message template name |
 | `WHATSAPP_TEMPLATE_LANGUAGE` | Yes | WhatsApp template language code |
 | `RESEND_API_KEY` | Yes | Resend API key (email fallback) |
+| `NEXT_PUBLIC_SENTRY_DSN` | Yes (Prod) | Sentry DSN for client/server error tracking |
+| `SENTRY_AUTH_TOKEN` | Yes (Prod) | Sentry auth token for uploading source maps |
+| `SENTRY_ORG` | Yes (Prod) | Sentry organization slug |
+| `SENTRY_PROJECT` | Yes (Prod) | Sentry project slug |
 
 > Variables prefixed with `NEXT_PUBLIC_` are safe to expose to the browser. All others are server-only.
+
+---
+
+## Error Monitoring (Sentry)
+
+Arrivo uses Sentry to track client, server, and edge exceptions in production. 
+
+1. **Local Setup:** 
+   Local development disables Sentry reporting by default to reduce noise (via `process.env.NODE_ENV === "production"` checks in the config files). You do not need Sentry keys to run the app locally.
+2. **Production Setup:**
+   For production builds, you must configure the following environment variables in your deployment platform (e.g. Vercel) or `.env`:
+   - `NEXT_PUBLIC_SENTRY_DSN`: Found in your Sentry project settings.
+   - `SENTRY_AUTH_TOKEN`: Create an internal integration token in Sentry to allow uploading source maps.
+   - `SENTRY_ORG`: Your Sentry organization slug.
+   - `SENTRY_PROJECT`: Your Sentry project slug.
+3. **Verification:**
+   Navigate to `/sentry-example-page` and click the "Throw Client Error" button to manually trigger a test error and ensure it appears in your Sentry dashboard. This page is intended for development/testing only.
 
 ---
 

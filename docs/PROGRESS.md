@@ -10,8 +10,8 @@ Update this document whenever a story is completed.
 
 | Epic | Name | Progress | Status |
 |------|------|----------|--------|
-| E0 | Platform Foundation | 5 / 6 | 🟡 In Progress |
-| E1 | Authentication & Onboarding | 0 / 6 | ⚪ Not Started |
+| E0 | Platform Foundation | 6 / 6 | ✅ Completed |
+| E1 | Authentication & Onboarding | 0 / 6 | 🟡 In Progress |
 | E2 | Organization Settings | 0 / 7 | ⚪ Not Started |
 | E3 | Business Configuration | 0 / 5 | ⚪ Not Started |
 | E4 | Services Management | 0 / 5 | ⚪ Not Started |
@@ -28,9 +28,9 @@ Update this document whenever a story is completed.
 
 # Current Epic
 
-**Epic:** E0 – Platform Foundation
+**Epic:** E1 – Authentication & Onboarding
 
-**Progress:** 5 / 6 Stories
+**Progress:** 0 / 6 Stories
 
 **Status:** 🟡 In Progress
 
@@ -38,9 +38,9 @@ Update this document whenever a story is completed.
 
 # Current Story
 
-**Story ID:** E0-S6
+**Story ID:** E1-S1
 
-**Title:** Configure error logging and monitoring
+**Title:** As an owner, I can register with email and password
 
 **Status:** Not Started
 
@@ -52,13 +52,14 @@ Update this document whenever a story is completed.
 - ✅ E0-S2 – Configure Supabase project (Auth, database, storage) and connect to the app
 - ✅ E0-S3 – Configure Drizzle ORM with initial schema and migration pipeline
 - ✅ E0-S4 – Enable RLS on all tenant-scoped tables with correct policies
-- ✅ E0-S5 – Configure Vercel deployment
+- ✅ E0-S5 – Configure Vercel deployment and CI/CD pipeline
+- ✅ E0-S6 – Configure error logging and monitoring
 
 ---
 
 # Upcoming Stories
 
-- ⏳ E0-S6 – Configure error logging and monitoring
+- ⏳ E1-S1 – As an owner, I can register with email and password
 
 ---
 

@@ -22,6 +22,8 @@ export const metadata: Metadata = {
     "Modern multi-tenant booking and reservation platform for service businesses.",
 };
 
+import { SentryProvider } from "./sentry-provider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,8 +35,13 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
-        <Providers>{children}</Providers>
+      <body
+        className="min-h-full flex flex-col bg-background text-foreground"
+        suppressHydrationWarning
+      >
+        <SentryProvider>
+          <Providers>{children}</Providers>
+        </SentryProvider>
       </body>
     </html>
   );
