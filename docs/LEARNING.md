@@ -822,6 +822,77 @@ Set up production-ready error tracking using Sentry in a Next.js 16 App Router a
 - [ ] I know why `middleware.ts` was renamed to `proxy.ts` in Next.js 16.
 - [ ] I can fix browser-extension induced hydration warnings using `suppressHydrationWarning`.
 
+---
+
+# Story: E1-S1 - Owner Registration
+
+## Date
+
+2026-07-23
+
+## Objective
+
+Implement the end-to-end registration flow for business owners using Next.js Server Actions, Supabase Auth, and Drizzle ORM to automatically create an organization and assign the OWNER role, ensuring transaction safety and idempotency.
+
+## What We Built
+
+We implemented a robust server action (`apps/web/app/actions/auth.ts`) that orchestrates the creation of a new user and their initial organization setup:
+1. Validates input (`firstName`, `lastName`, `email`, `password`) using Zod.
+2. Creates the user via `supabase.auth.signUp`.
+3. Opens a Drizzle transaction to generate a unique slug and insert records into `organizations` and `organization_members`.
+4. If the database transaction fails, uses a newly created Supabase Admin client (`lib/supabase/admin.ts`) to immediately delete the orphaned Auth user.
+We also built a responsive registration UI (`apps/web/app/register/page.tsx` and `register-form.tsx`) using React Hook Form, handling loading states and displaying inline and toast error messages.
+
+## Why We Built It This Way
+
+**Transaction Rollbacks with Supabase Auth:** Unlike a traditional monolithic backend where auth and user tables live in the same database and can be wrapped in a single SQL transaction, Supabase Auth creates the user in the `auth` schema outside our control. If our Drizzle transaction fails (e.g., due to a constraint violation), we are left with an "orphaned" auth user who has no organization. By catching the Drizzle error and using the Supabase Service Role key to delete the user, we guarantee atomic-like consistency without writing complex PL/pgSQL triggers.
+
+**Idempotency & Duplicate Requests:** To prevent issues where a user might double-click the register button or retry after a network timeout, we added an idempotency check inside the Drizzle transaction (`existingMember = await tx.select()...`). If the user already has an organization, we gracefully exit the transaction without attempting to create duplicate records.
+
+**Temporary Organizations:** Because the specific business name and slug aren't collected until the next story (E1-S2), we generated a temporary organization name (`"{firstName} {lastName}'s Business"`) and a unique readable slug (`slugify(name) + counter`). This satisfies the database `NOT NULL` constraints while keeping the URL readable.
+
+## Architecture Decisions
+
+- **Decision:** Use Server Actions for registration instead of API Routes.
+  - **Reason:** Provides seamless type safety with Zod, avoids managing fetch state on the client, and allows us to run heavy server-side transactions securely.
+- **Decision:** Use a dedicated Supabase Admin client (`createAdminClient`).
+  - **Reason:** Administrative actions like deleting a user require the `SUPABASE_SERVICE_ROLE_KEY`. This key must be strictly isolated to prevent accidental exposure to the client.
+
+## Concepts to Master
+
+### Server Actions
+- **What it is:** Asynchronous functions executed on the server that can be called directly from Client Components.
+- **Why we use it:** Reduces boilerplate, securely accesses database credentials, and handles complex mutations.
+
+### Supabase Admin API
+- **What it is:** A subset of the Supabase API accessed via the Service Role Key, bypassing all Row Level Security.
+- **Why we need it:** To perform privileged operations like deleting a user (`auth.admin.deleteUser`) which standard users cannot do to themselves without specific RLS policies.
+
+### Slug Generation
+- **What it is:** Converting a human-readable string (e.g., "John Doe's Business") into a URL-friendly format ("john-does-business").
+- **Why we need it:** To provide readable vanity URLs for public booking pages while ensuring uniqueness via iterative database checks.
+
+## Files to Study
+
+- **`apps/web/app/actions/auth.ts`**: The core registration logic, transaction handling, and slug generation.
+- **`apps/web/lib/supabase/admin.ts`**: The isolated, secure admin client factory.
+- **`apps/web/app/register/register-form.tsx`**: Client-side form handling and validation with `react-hook-form` and `zod`.
+
+## Common Mistakes
+
+- **Leaking Service Role Key:** Importing `createAdminClient` inside a file marked with `"use client"`. This will instantly expose full database control to the browser.
+- **Ignoring Orphaned Records:** Failing to roll back the `auth.users` record if the Drizzle transaction throws an error, leaving the application in an invalid state.
+
+## Where This Will Be Used
+
+- **Epic 1 (Onboarding):** The successful completion of this action redirects the user to the onboarding flow where they will finalize their organization details.
+
+## Revision Checklist
+
+- [ ] I understand why we must delete the Auth user if the Drizzle transaction fails.
+- [ ] I can explain why the `SUPABASE_SERVICE_ROLE_KEY` is required for deleting a user.
+- [ ] I understand how Server Actions differ from traditional API endpoints.
+
 ## Concepts to Master
 
 - **Next.js Instrumentation:** Using `instrumentation.ts` to run code during the Next.js server initialization.

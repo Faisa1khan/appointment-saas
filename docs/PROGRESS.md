@@ -30,7 +30,7 @@ Update this document whenever a story is completed.
 
 **Epic:** E1 – Authentication & Onboarding
 
-**Progress:** 0 / 6 Stories
+**Progress:** 1 / 6 Stories
 
 **Status:** 🟡 In Progress
 
@@ -38,9 +38,9 @@ Update this document whenever a story is completed.
 
 # Current Story
 
-**Story ID:** E1-S1
+**Story ID:** E1-S2
 
-**Title:** As an owner, I can register with email and password
+**Title:** As an owner, I am prompted to create my organization immediately after registration
 
 **Status:** Not Started
 
@@ -54,12 +54,13 @@ Update this document whenever a story is completed.
 - ✅ E0-S4 – Enable RLS on all tenant-scoped tables with correct policies
 - ✅ E0-S5 – Configure Vercel deployment and CI/CD pipeline
 - ✅ E0-S6 – Configure error logging and monitoring
+- ✅ E1-S1 – As an owner, I can register with email and password
 
 ---
 
 # Upcoming Stories
 
-- ⏳ E1-S1 – As an owner, I can register with email and password
+- ⏳ E1-S2 – As an owner, I am prompted to create my organization immediately after registration
 
 ---
 
