@@ -668,3 +668,113 @@ We created a custom SQL migration file to enable Row Level Security on the 10 te
 - RLS provides database-level isolation between tenants.
 - Helper functions simplify RLS management.
 - The `service_role` key is essential for securely bypassing RLS during initial provisioning (like creating organizations).
+
+---
+
+# Story: E0-S5 - Configure Vercel Deployment
+
+## Date
+
+2026-07-22
+
+## Objective
+
+Establish a continuous deployment (CD) pipeline by connecting the GitHub repository to Vercel and configuring the required environment variables for staging and production, ensuring that every push to the `main` branch automatically deploys.
+
+---
+
+## Prerequisites
+
+- Understanding of Continuous Deployment (CD).
+- Basic knowledge of environment variables and their role in different environments (Development, Preview, Production).
+- Familiarity with the Vercel dashboard and GitHub integration.
+
+---
+
+## What We Built
+
+We linked the `appointment-saas` GitHub repository to Vercel and configured the `apps/web` directory as the project root. We added the following environment variables to the Vercel dashboard for both Preview and Production environments:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `DATABASE_URL`
+
+This ensures that our deployed app correctly connects to the Supabase backend.
+
+---
+
+## Why We Built It This Way
+
+**Vercel for Next.js:** Vercel is the creator of Next.js and provides zero-config deployments, optimal caching, and edge networking for Next.js applications out of the box.
+**Environment Variable Separation:** We use Vercel's environment variables rather than committing a `.env` file to securely inject configuration based on the environment (e.g., Preview vs. Production). 
+
+---
+
+## Architecture Decisions
+
+- **Decision:** Use Vercel as the hosting provider.
+  - **Reason:** Seamless integration with Next.js, automatic preview deployments for PRs, and built-in CI/CD pipelines.
+
+---
+
+## Concepts to Master
+
+### Environment Variables Contexts
+- **NEXT_PUBLIC_ Prefix:** Variables prefixed with `NEXT_PUBLIC_` (e.g., `NEXT_PUBLIC_SUPABASE_ANON_KEY`) are exposed to the browser. They are safe to use in Client Components.
+- **Secret Variables:** Variables without the prefix (e.g., `SUPABASE_SERVICE_ROLE_KEY`) are kept strictly on the server. They must never be used in client-side code, as they provide privileged access (e.g., bypassing Row Level Security).
+
+### Continuous Deployment
+- **What it is:** A software engineering approach where code changes are automatically prepared for a release to production.
+
+---
+
+## Vocabulary
+
+- **CI/CD:** Continuous Integration / Continuous Deployment.
+- **Preview Environment:** A temporary environment created automatically for a branch or pull request to preview changes before merging into `main`.
+
+---
+
+## Best Practices Learned
+
+- **Environment Variable Security:** Always be cautious with API keys. `NEXT_PUBLIC_*` variables are safe for the client, while keys like `SUPABASE_SERVICE_ROLE_KEY` must only be accessed from server-side code (Server Actions, Route Handlers, API routes).
+- **Test Locally First:** Always ensure the app builds successfully locally (`npm run build`) before pushing and relying on Vercel's build pipeline.
+
+---
+
+## Common Mistakes
+
+- **Leaking Secrets:** Exposing the `SUPABASE_SERVICE_ROLE_KEY` to the client by incorrectly prefixing it with `NEXT_PUBLIC_` or importing it in a Client Component.
+- **Incorrect Root Directory:** Forgetting to set `apps/web` as the root directory in a monorepo or sub-directory setup, leading to build failures on Vercel.
+
+---
+
+## Where This Will Be Used
+
+- **Future Epics:** Every subsequent feature built (Authentication, Dashboards, Bookings) will be automatically deployed and testable in a real environment.
+
+---
+
+## Common Interview Questions
+
+**Q: Why must `SUPABASE_SERVICE_ROLE_KEY` never be exposed to the browser?**
+**A:** Because it bypasses all Row Level Security (RLS) policies in the database, granting full admin privileges. If a malicious user obtains it, they can read, modify, or delete all data across all tenants.
+
+**Q: What is the difference between a `NEXT_PUBLIC_` environment variable and a standard environment variable in Next.js?**
+**A:** `NEXT_PUBLIC_` variables are explicitly bundled into the client-side JavaScript and are accessible in the browser. Standard environment variables are only available in the Node.js runtime (server side).
+
+---
+
+## Revision Checklist
+
+- [ ] I can deploy a Next.js application to Vercel.
+- [ ] I understand the difference between Development, Preview, and Production environments.
+- [ ] I know which environment variables are safe to expose to the client and which must remain on the server.
+
+---
+
+## Key Takeaways
+
+- Vercel provides seamless CI/CD for Next.js applications.
+- Proper handling of environment variables is critical for security, especially distinguishing between client-safe (`NEXT_PUBLIC_`) and server-only keys (`SUPABASE_SERVICE_ROLE_KEY`).
+- We are now ready to build out the application features (Epic 1+), knowing that every push will be automatically deployed and testable.
