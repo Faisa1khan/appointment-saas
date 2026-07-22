@@ -16,6 +16,11 @@ AS $$
   );
 $$;
 
+-- 1.5 Fix SECURITY DEFINER permissions
+REVOKE EXECUTE ON FUNCTION public.is_org_member(uuid) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.is_org_member(uuid) FROM anon;
+GRANT EXECUTE ON FUNCTION public.is_org_member(uuid) TO authenticated, service_role;
+
 -- 2. Enable RLS
 ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE organization_members ENABLE ROW LEVEL SECURITY;
