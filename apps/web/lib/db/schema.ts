@@ -54,7 +54,7 @@ export const organizations = pgTable(
   {
     id: uuid('id').defaultRandom().primaryKey(),
     name: text('name').notNull(),
-    slug: text('slug').notNull().unique(),
+    slug: text('slug').notNull(),
     phone: text('phone'),
     email: text('email'),
     address: text('address'),

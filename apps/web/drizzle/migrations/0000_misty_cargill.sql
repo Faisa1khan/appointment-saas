@@ -1,4 +1,3 @@
-CREATE SCHEMA IF NOT EXISTS "auth";
 --> statement-breakpoint
 CREATE TYPE "public"."booking_source" AS ENUM('ONLINE', 'WALK_IN', 'PHONE', 'STAFF');--> statement-breakpoint
 CREATE TYPE "public"."booking_status" AS ENUM('CONFIRMED', 'CHECKED_IN', 'COMPLETED', 'CANCELLED', 'NO_SHOW');--> statement-breakpoint
@@ -88,8 +87,7 @@ CREATE TABLE "organizations" (
 	"min_advance_minutes" integer DEFAULT 0 NOT NULL,
 	"cancellation_cutoff_hours" integer DEFAULT 0 NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "organizations_slug_unique" UNIQUE("slug")
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "resource_schedules" (
@@ -126,10 +124,6 @@ CREATE TABLE "services" (
 	"is_active" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE "auth"."users" (
-	"id" uuid PRIMARY KEY NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "booking_services" ADD CONSTRAINT "booking_services_booking_id_bookings_id_fk" FOREIGN KEY ("booking_id") REFERENCES "public"."bookings"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
