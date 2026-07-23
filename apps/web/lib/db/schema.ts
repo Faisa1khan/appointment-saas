@@ -154,7 +154,30 @@ export const customers = pgTable(
   ]
 )
 
-// 4. Services
+// 4. Service Categories
+export const serviceCategories = pgTable(
+  'service_categories',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    organizationId: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    color: text('color'), // Uses predefined palette e.g., 'blue', 'green'
+    displayOrder: integer('display_order').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index('service_categories_org_idx').on(table.organizationId),
+  ]
+)
+
+// 5. Services
 export const services = pgTable(
   'services',
   {
@@ -162,11 +185,19 @@ export const services = pgTable(
     organizationId: uuid('organization_id')
       .notNull()
       .references(() => organizations.id, { onDelete: 'cascade' }),
+    categoryId: uuid('category_id').references(() => serviceCategories.id, {
+      onDelete: 'set null',
+    }),
     name: text('name').notNull(),
     description: text('description'),
-    duration: integer('duration').notNull(),
-    price: integer('price').notNull().default(0),
-    isActive: boolean('is_active').notNull().default(true),
+    durationMinutes: integer('duration').notNull(), // Minutes
+    price: integer('price').notNull().default(0), // Minor units (e.g., cents)
+    currency: text('currency').notNull().default('USD'),
+    color: text('color'), // Uses predefined palette e.g., 'blue', 'green'
+    displayOrder: integer('display_order').notNull().default(0),
+    isActive: boolean('is_active').notNull().default(true), // Archive strategy
+    bufferBeforeMinutes: integer('buffer_before_minutes').notNull().default(0),
+    bufferAfterMinutes: integer('buffer_after_minutes').notNull().default(0),
     createdAt: timestamp('created_at', { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -176,6 +207,7 @@ export const services = pgTable(
   },
   (table) => [
     index('services_org_active_idx').on(table.organizationId, table.isActive),
+    index('services_category_idx').on(table.categoryId),
   ]
 )
 
@@ -361,7 +393,7 @@ export const bookingServices = pgTable(
       onDelete: 'set null',
     }),
     serviceName: text('service_name').notNull(),
-    duration: integer('duration').notNull(),
+    durationMinutes: integer('duration').notNull(),
     price: integer('price').notNull(),
     quantity: integer('quantity').notNull().default(1),
     total: integer('total').notNull(),

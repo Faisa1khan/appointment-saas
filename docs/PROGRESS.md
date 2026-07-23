@@ -8,18 +8,19 @@ Update this document whenever a story is completed.
 
 # Overall Progress
 
-| Epic | Name | Progress | Status |
-|------|------|----------|--------|
-| E0 | Platform Foundation | 7 / 7 | ✅ Completed |
-| E1 | Authentication & Onboarding | 2 / 7 | 🟡 In Progress |
+| Epic | Name | Status |
+|------|------|--------|
+| E1 | Platform Foundation | ✅ Completed |
+| E2 | Core Booking Domain | 🟡 In Progress |
+| E3 | Business Administration | ⚪ Not Started |
+| E4 | Customer Experience | ⚪ Not Started |
+| E5 | Growth Features | ⚪ Not Started |
 
 ---
 
 # Current Epic
 
-**Epic:** E1 – Authentication & Onboarding
-
-**Progress:** 5 / 7 Stories
+**Epic:** E2 – Core Booking Domain
 
 **Status:** 🟡 In Progress
 
@@ -27,11 +28,11 @@ Update this document whenever a story is completed.
 
 # Current Story
 
-**Story ID:** E1-S5
+**Story ID:** E2.1-S1
 
-**Title:** As an owner, I see an empty dashboard with setup prompts on first login
+**Title:** Service Management (CRUD operations and ordering)
 
-**Status:** Not Started
+**Status:** 🟡 In Progress
 
 ---
 
@@ -50,12 +51,19 @@ Update this document whenever a story is completed.
 - ✅ E1-S2 – As an owner, I am prompted to create my organization immediately after registration
 - ✅ E1-S3 – As an owner, I can set my business name, slug, timezone, and booking interval
 - ✅ E1-S4 – As an owner, I can log in and log out
+- ✅ Platform Compliance Audit – Resolved all remaining hardcoded UI text, theming issues, and applied strict Definition of Done
 
 ---
 
 # Upcoming Stories
 
-- ⏳ E1-S5 – As an owner, I see an empty dashboard with setup prompts on first login
+- ⏳ E2.1-S2 – Service Categories (Create/Edit/Assign)
+- ⏳ E2.2-S1 – Set weekly business hours
+- ⏳ E2.2-S2 – Mark specific days or dates as closed (holidays)
+- ⏳ E2.3-S1 – Add staff members and custom schedules
+- ⏳ E2.4-S1 – Backend generates appointment slots with rules engine
+- ⏳ E2.4-S2 – Backend conflict detection and atomic validation
+- ⏳ E2.4-S3 – Create, reschedule, and cancel bookings
 
 ---
 

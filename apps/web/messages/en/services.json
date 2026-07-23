@@ -1,0 +1,63 @@
+{
+  "title": "Services",
+  "subtitle": "Manage what customers can book",
+  "addService": "Add Service",
+  "addCategory": "Add Category",
+  "empty": {
+    "title": "Create your first service",
+    "description": "Services are what customers can book. Start by adding the first service your business offers."
+  },
+  "table": {
+    "name": "Service Name",
+    "duration": "Duration",
+    "price": "Price",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "status": {
+    "active": "Active",
+    "archived": "Archived"
+  },
+  "actions": {
+    "edit": "Edit",
+    "archive": "Archive",
+    "restore": "Restore",
+    "moveUp": "Move Up",
+    "moveDown": "Move Down"
+  },
+  "form": {
+    "createTitle": "Create Service",
+    "editTitle": "Edit Service",
+    "name": "Name",
+    "namePlaceholder": "e.g., Haircut",
+    "description": "Description (Optional)",
+    "descriptionPlaceholder": "Short description of the service",
+    "duration": "Duration (Minutes)",
+    "price": "Price",
+    "color": "Color",
+    "category": "Category",
+    "save": "Save Service",
+    "cancel": "Cancel",
+    "colors": {
+      "blue": "Blue",
+      "green": "Green",
+      "orange": "Orange",
+      "purple": "Purple",
+      "pink": "Pink",
+      "red": "Red",
+      "yellow": "Yellow",
+      "gray": "Gray"
+    }
+  },
+  "messages": {
+    "created": "Service created successfully.",
+    "updated": "Service updated successfully.",
+    "archived": "Service archived.",
+    "restored": "Service restored.",
+    "error": "An error occurred. Please try again."
+  },
+  "tabs": {
+    "active": "Active",
+    "archived": "Archived"
+  }
+}

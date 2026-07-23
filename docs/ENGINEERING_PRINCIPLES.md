@@ -255,3 +255,9 @@ All user preferences, profile information, and application settings must be stor
 ## Onboarding
 
 **Onboarding should always ask for the minimum information required to let users start using the product. Optional configuration belongs in Settings after onboarding.**
+
+---
+
+## Product Strategy
+
+**Every epic must move Arrivo closer to completing a real customer booking.** If a feature doesn't directly enable, improve, or support the booking journey, it should be evaluated carefully before being prioritized in the MVP.

@@ -2,7 +2,7 @@
 
 import { z } from "zod"
 import { db } from "@/lib/db"
-import { organizations, organizationMembers, appUsers } from "@/lib/db/schema"
+import { organizations, organizationMembers, appUsers, serviceCategories } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { createClient } from "@/lib/supabase/server"
 
@@ -91,6 +91,12 @@ export async function completeOnboarding(formData: z.infer<typeof onboardingSche
         organizationId: org.id,
         userId: appUserId,
         role: 'OWNER',
+      })
+
+      // Seed default category
+      await tx.insert(serviceCategories).values({
+        organizationId: org.id,
+        name: 'General',
       })
     })
 
