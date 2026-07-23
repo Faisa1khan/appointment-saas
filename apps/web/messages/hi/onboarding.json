@@ -1,0 +1,32 @@
+{
+  "title": "Arrivo में आपका स्वागत है 👋",
+  "subtitle": "आइए आपका व्यवसाय सेट करें।",
+  "description": "इसमें केवल एक मिनट लगेगा।",
+  "continue": "जारी रखें",
+  "back": "पीछे",
+  "create_business": "व्यवसाय बनाएं",
+  "creating": "बनाया जा रहा है...",
+  "business_details": "व्यवसाय विवरण",
+  "business_details_sub": "आप इन्हें बाद में सेटिंग्स में बदल सकते हैं।",
+  "business_name": "व्यवसाय का नाम",
+  "business_name_placeholder": "फैसल सैलून",
+  "business_url": "व्यवसाय URL",
+  "timezone": "समय क्षेत्र",
+  "timezone_placeholder": "समय क्षेत्र चुनें",
+  "review": "समीक्षा",
+  "review_sub": "कृपया अपने व्यवसाय विवरण की पुष्टि करें।",
+  "booking_url": "बुकिंग URL",
+  "booking_interval": "बुकिंग अंतराल",
+  "30_minutes": "30 मिनट",
+  "success_title": "🎉 आपका व्यवसाय बन गया है!",
+  "success_sub": "Arrivo में आपका स्वागत है।",
+  "go_to_dashboard": "डैशबोर्ड पर जाएं",
+  "checking": "जाँच हो रही है...",
+  "available": "उपलब्ध",
+  "taken": "यह URL पहले ही लिया जा चुका है।",
+  "steps": {
+    "account": "खाता",
+    "business": "व्यवसाय",
+    "finish": "समाप्त"
+  }
+}

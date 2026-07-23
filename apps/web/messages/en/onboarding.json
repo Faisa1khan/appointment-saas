@@ -1,0 +1,32 @@
+{
+  "title": "Welcome to Arrivo 👋",
+  "subtitle": "Let's set up your business.",
+  "description": "This only takes about a minute.",
+  "continue": "Continue",
+  "back": "Back",
+  "create_business": "Create Business",
+  "creating": "Creating...",
+  "business_details": "Business Details",
+  "business_details_sub": "You can change these later in settings.",
+  "business_name": "Business Name",
+  "business_name_placeholder": "Faisal Salon",
+  "business_url": "Business URL",
+  "timezone": "Timezone",
+  "timezone_placeholder": "Select a timezone",
+  "review": "Review",
+  "review_sub": "Please confirm your business details.",
+  "booking_url": "Booking URL",
+  "booking_interval": "Booking Interval",
+  "30_minutes": "30 minutes",
+  "success_title": "🎉 Your business has been created!",
+  "success_sub": "Welcome to Arrivo.",
+  "go_to_dashboard": "Go to Dashboard",
+  "checking": "Checking...",
+  "available": "Available",
+  "taken": "This URL is already taken.",
+  "steps": {
+    "account": "Account",
+    "business": "Business",
+    "finish": "Finish"
+  }
+}

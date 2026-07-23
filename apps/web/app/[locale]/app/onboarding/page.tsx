@@ -3,19 +3,19 @@ import { createClient } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 import { organizationMembers } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
+import { ensureAppUser } from "@/lib/auth/ensure-app-user"
+import { OnboardingWizard } from "@/components/forms/onboarding-wizard"
+import { getTranslations } from "next-intl/server"
 
-export default async function AppRouter() {
+export default async function OnboardingPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) {
-    redirect("/login")
-  }
-
-  const { ensureAppUser } = await import('@/lib/auth/ensure-app-user')
+  if (!user) redirect("/login")
+  
   const appUser = await ensureAppUser(user)
 
-  // Check if user has an organization
+  // Verify they don't already have an org
   const existingMember = await db
     .select({ id: organizationMembers.id })
     .from(organizationMembers)
@@ -23,10 +23,12 @@ export default async function AppRouter() {
     .limit(1)
 
   if (existingMember.length > 0) {
-    // User has an organization, redirect to dashboard
     redirect("/app/dashboard")
-  } else {
-    // No organization, redirect to onboarding
-    redirect("/app/onboarding")
   }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <OnboardingWizard defaultTimezone={appUser.timezone || "UTC"} />
+    </div>
+  )
 }

@@ -247,3 +247,9 @@ All contributors must refer to `docs/i18n-guidelines.md` for translation naming 
 Never store long-term business or application state inside Supabase Auth metadata unless it is strictly authentication-related.
 
 All user preferences, profile information, and application settings must be stored in the application database (`public.app_users`). All application relationships (e.g., organizations, customers, bookings) should point to `app_users`, not directly to `auth.users`.
+
+---
+
+## Onboarding
+
+**Onboarding should always ask for the minimum information required to let users start using the product. Optional configuration belongs in Settings after onboarding.**

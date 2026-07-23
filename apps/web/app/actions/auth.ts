@@ -101,43 +101,7 @@ export async function registerOwner(prevState: any, formData: FormData) {
   // 3. Drizzle Transaction
   try {
     const { ensureAppUser } = await import('@/lib/auth/ensure-app-user')
-    const appUser = await ensureAppUser(authData.user)
-    const appUserId = appUser.id
-
-    await db.transaction(async (tx) => {
-      // Idempotency check: Does this user already have an organization?
-      const existingMember = await tx
-        .select({ id: organizationMembers.id })
-        .from(organizationMembers)
-        .where(eq(organizationMembers.userId, appUserId))
-        .limit(1)
-
-      if (existingMember.length > 0) {
-        // User is already an owner/member, no need to recreate
-        return
-      }
-
-      // Generate temp organization name and slug
-      const orgName = `${firstName} ${lastName}'s Business`
-      const baseSlug = slugify(`${firstName} ${lastName}`) || 'org'
-      const uniqueSlug = await generateUniqueSlug(tx, baseSlug)
-
-      // Insert Organization
-      const [org] = await tx
-        .insert(organizations)
-        .values({
-          name: orgName,
-          slug: uniqueSlug,
-        })
-        .returning({ id: organizations.id })
-
-      // Insert Member
-      await tx.insert(organizationMembers).values({
-        organizationId: org.id,
-        userId: appUserId,
-        role: 'OWNER',
-      })
-    })
+    await ensureAppUser(authData.user)
   } catch (dbError) {
     console.error('Registration Transaction Error:', dbError)
     transactionFailed = true

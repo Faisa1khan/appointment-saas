@@ -19,7 +19,7 @@ Update this document whenever a story is completed.
 
 **Epic:** E1 – Authentication & Onboarding
 
-**Progress:** 2 / 7 Stories
+**Progress:** 4 / 7 Stories
 
 **Status:** 🟡 In Progress
 
@@ -27,9 +27,9 @@ Update this document whenever a story is completed.
 
 # Current Story
 
-**Story ID:** E1-S2
+**Story ID:** E1-S4
 
-**Title:** As an owner, I am prompted to create my organization immediately after registration
+**Title:** As an owner, I can log in and log out
 
 **Status:** Not Started
 
@@ -47,12 +47,14 @@ Update this document whenever a story is completed.
 - ✅ E1-S1 – As an owner, I can register with email and password
 - ✅ E1-S1.5 – Authentication Experience Completion
 - ✅ E1-S1.8 – Internationalization (i18n) Foundation
+- ✅ E1-S2 – As an owner, I am prompted to create my organization immediately after registration
+- ✅ E1-S3 – As an owner, I can set my business name, slug, timezone, and booking interval
 
 ---
 
 # Upcoming Stories
 
-- ⏳ E1-S2 – As an owner, I am prompted to create my organization immediately after registration
+- ⏳ E1-S4 – As an owner, I can log in and log out
 
 ---
 

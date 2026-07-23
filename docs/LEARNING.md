@@ -1156,3 +1156,61 @@ Establish permanent engineering standards, a fully mobile-first responsive basel
 - The foundation must be mobile-first and theme-aware *before* business features are built.
 - Service Workers provide resilience and performance.
 - Documentation (`ENGINEERING_PRINCIPLES.md`, `ARCHITECTURE.md`) is critical for scaling a codebase across multiple contributors.
+
+---
+
+# Story: E1-S2 & E1-S3 - Organization Creation & Onboarding
+
+## Date
+
+2026-07-23
+
+## Objective
+
+Decouple organization creation from user registration and build a dedicated onboarding flow to collect the minimum required business information (Business Name, Slug, Timezone) before granting access to the dashboard.
+
+---
+
+## What We Built
+
+1. **Decoupled Identity:** Modified the `registerOwner` action so it exclusively creates the `auth.users` and `app_users` records, explicitly removing implicit organization creation.
+2. **Onboarding Layout:** Created an authenticated shell at `app/[locale]/app/layout.tsx` that calls `ensureAppUser` to guarantee a valid canonical identity.
+3. **Onboarding Wizard:** Built `OnboardingWizard` (a multi-step client component) gathering just the essentials.
+4. **Live URL Slug Validation:** Implemented a debounced `checkSlugAvailability` server action to verify slug uniqueness as the user types, providing live feedback.
+5. **Robust Routing Check:** Configured `app/[locale]/app/page.tsx` to act as a traffic director—redirecting to `/app/onboarding` if no organization exists, or `/app/dashboard` otherwise.
+
+---
+
+## Why We Built It This Way
+
+**Reduced Friction on Registration:** Registration should be as fast as possible. Asking for business details during registration increases drop-off. Separating it into an onboarding flow creates a better, more focused user experience.
+
+**Minimum Required Information:** We strictly followed the engineering principle to ask for the bare minimum (Business Name and Timezone). Fields like booking interval are initialized with sensible defaults (30 minutes) to avoid overwhelming the user. They can be edited later in Settings.
+
+**Live Validation:** Verifying the slug dynamically prevents frustrating submission errors and gives users an immediate sense of ownership over their public URL.
+
+---
+
+## Concepts to Master
+
+### Client-Side Debouncing
+- **What it is:** Delaying the execution of a function until a certain amount of time has passed since the last time it was called (e.g., waiting 500ms after the user stops typing before making a database query).
+- **Why we need it:** To prevent overwhelming the database with validation requests on every single keystroke.
+
+### Canonical Authenticated Entry Point
+- **What it is:** Designating a single route (e.g., `/app`) that acts as the gateway for logged-in users, responsible for routing them to the correct application state (onboarding vs dashboard).
+
+---
+
+## Vocabulary
+
+- **Debounce:** A technique to ensure a function is not called too frequently.
+- **Wizard:** A user interface that presents a complex task as a sequence of simpler, sequential steps.
+
+---
+
+## Key Takeaways
+
+- Registration (Identity) and Onboarding (Business Setup) are distinct concerns and should be decoupled.
+- Ask for the bare minimum during onboarding to accelerate time-to-value.
+- Use an authenticated layout (`app/layout.tsx`) to enforce data guarantees (like `ensureAppUser`) across all authenticated routes.
