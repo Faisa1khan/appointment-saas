@@ -20,7 +20,7 @@ import { sql } from 'drizzle-orm'
 // -----------------------------------------------------------------------------
 export const authSchema = pgSchema('auth')
 
-export const users = authSchema.table('users', {
+export const authUsers = authSchema.table('users', {
   id: uuid('id').primaryKey(),
 })
 
@@ -44,9 +44,32 @@ export const bookingStatusEnum = pgEnum('booking_status', [
 
 export const memberRoleEnum = pgEnum('member_role', ['OWNER', 'STAFF'])
 
+export const themeEnum = pgEnum('theme', ['system', 'light', 'dark'])
+export const languageEnum = pgEnum('language', ['en', 'hi'])
+
 // -----------------------------------------------------------------------------
 // Tables
 // -----------------------------------------------------------------------------
+
+// 0. App Users (Canonical Application User)
+export const appUsers = pgTable('app_users', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  authUserId: uuid('auth_user_id')
+    .notNull()
+    .unique()
+    .references(() => authUsers.id, { onDelete: 'cascade' }),
+  displayName: text('display_name'),
+  avatarImageUrl: text('avatar_image_url'),
+  preferredLanguage: languageEnum('preferred_language').notNull().default('en'),
+  theme: themeEnum('theme').notNull().default('system'),
+  timezone: text('timezone'),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+})
 
 // 1. Organizations
 export const organizations = pgTable(
@@ -84,7 +107,7 @@ export const organizationMembers = pgTable(
       .references(() => organizations.id, { onDelete: 'cascade' }),
     userId: uuid('user_id')
       .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
+      .references(() => appUsers.id, { onDelete: 'cascade' }),
     role: memberRoleEnum('role').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true })
       .notNull()
@@ -107,7 +130,7 @@ export const customers = pgTable(
     organizationId: uuid('organization_id')
       .notNull()
       .references(() => organizations.id, { onDelete: 'cascade' }),
-    userId: uuid('user_id').references(() => users.id, {
+    userId: uuid('user_id').references(() => appUsers.id, {
       onDelete: 'set null',
     }),
     name: text('name').notNull(),

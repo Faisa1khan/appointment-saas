@@ -12,19 +12,18 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { PasswordInput } from "@/components/ui/password-input"
 import { login } from "@/app/actions/auth"
+import { useTranslations } from "next-intl"
 
 const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  password: z.string().min(1, {
-    message: "Password is required.",
-  }),
+  email: z.string().email(),
+  password: z.string().min(1),
 })
 
 export function LoginForm() {
   const router = useRouter()
   const [isPending, startTransition] = React.useTransition()
+  const t = useTranslations('auth.login')
+  const tErrors = useTranslations('auth.errors')
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,7 +65,7 @@ export function LoginForm() {
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">{t('emailLabel')}</Label>
         <Input
           id="email"
           type="email"
@@ -76,18 +75,18 @@ export function LoginForm() {
         />
         {form.formState.errors.email && (
           <p className="text-sm text-destructive font-medium">
-            {form.formState.errors.email.message}
+            {tErrors('invalidEmail')}
           </p>
         )}
       </div>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{t('passwordLabel')}</Label>
           <Link
             href="/forgot-password"
             className="text-sm font-medium text-muted-foreground hover:text-primary underline-offset-4 hover:underline"
           >
-            Forgot password?
+            {t('forgotPasswordLink')}
           </Link>
         </div>
         <PasswordInput
@@ -98,17 +97,17 @@ export function LoginForm() {
         />
         {form.formState.errors.password && (
           <p className="text-sm text-destructive font-medium">
-            {form.formState.errors.password.message}
+            {form.formState.errors.password.message || tErrors('generic')}
           </p>
         )}
       </div>
       <Button type="submit" className="w-full" disabled={isPending}>
-        {isPending ? "Signing in..." : "Sign in"}
+        {isPending ? "..." : t('submitButton')}
       </Button>
       <div className="text-center text-sm">
-        Don&apos;t have an account?{" "}
+        {t('noAccount')}{" "}
         <Link href="/register" className="underline underline-offset-4 hover:text-primary">
-          Create Account
+          {t('registerLink')}
         </Link>
       </div>
     </form>

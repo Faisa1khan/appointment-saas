@@ -46,6 +46,7 @@ Update this document whenever a story is completed.
 - ✅ E0-S7 – Engineering Principles & Platform Foundation
 - ✅ E1-S1 – As an owner, I can register with email and password
 - ✅ E1-S1.5 – Authentication Experience Completion
+- ✅ E1-S1.8 – Internationalization (i18n) Foundation
 
 ---
 

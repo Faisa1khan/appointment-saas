@@ -1,0 +1,11 @@
+{
+  "hero": {
+    "title": "Smarter booking for <br></br> <primary>modern businesses.</primary>",
+    "subtitle": "Manage your schedule, delight your clients, and grow your business with a complete, all-in-one appointment platform.",
+    "cta": "Create Account"
+  },
+  "navigation": {
+    "login": "Sign in",
+    "register": "Sign up"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit"
+  },
+  "navigation": {
+    "login": "Sign in",
+    "register": "Sign up"
+  }
+}

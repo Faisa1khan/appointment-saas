@@ -1,0 +1,11 @@
+{
+  "buttons": {
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "submit": "जमा करें"
+  },
+  "navigation": {
+    "login": "साइन इन करें",
+    "register": "साइन अप करें"
+  }
+}

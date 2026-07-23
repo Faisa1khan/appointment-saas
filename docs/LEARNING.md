@@ -156,6 +156,47 @@ We bootstrapped the primary web application (`apps/web`) using Next.js 15 with t
 
 ---
 
+## Where This Will Be Used:
+Whenever we implement any form, email list, or content where a boolean confirmation status is required.
+
+---
+
+### Epic 1, Story 1.8: Internationalization (i18n) Foundation
+
+**Objective:**
+Make the Arrivo architecture i18n-ready from day one so that expanding to other languages and regions later is straightforward, avoiding massive legacy refactoring.
+
+**What We Built:**
+- Installed and configured `next-intl` with the Next.js App Router.
+- Restructured the `app` directory to support localized routing (`app/[locale]/...`).
+- Configured a `localePrefix: 'as-needed'` strategy, so the default language (English) does not show up in the URL, while alternatives (like Hindi) use `/hi`.
+- Created nested translation files (`messages/en/auth.json`, `common.json`, etc.) using namespaces.
+- Updated the proxy middleware to seamlessly compose Supabase session management with Next-Intl localized routing.
+- Built a `LanguageSwitcher` component.
+
+**Why We Built It This Way:**
+It is significantly easier to start with an i18n-ready architecture than to shoehorn it in later. By choosing `next-intl`, we gained first-class support for App Router features (like React Server Components) while maintaining SEO-friendly URLs. The `as-needed` prefix strategy ensures our existing english URLs (`/login`, `/app`) remain intact without aggressive redirects.
+
+**Concepts to Master:**
+- Middleware Composition
+- Next.js Dynamic Segments (`[locale]`)
+- Translation Namespaces
+
+**Vocabulary:**
+- **i18n:** Internationalization (the process of making software ready to support multiple languages).
+- **l10n:** Localization (the actual translation and adaptation for a specific region).
+- **RTL:** Right-to-Left writing systems (like Arabic or Hebrew).
+
+**Files to Study:**
+- `apps/web/i18n/routing.ts`
+- `apps/web/proxy.ts`
+- `apps/web/app/[locale]/layout.tsx`
+
+**Key Takeaways:**
+Never translate user-generated or database content. Use logical CSS properties (`margin-inline-start`) instead of directional properties (`margin-left`) to naturally prepare for RTL support.
+
+---
+
 ## Where This Will Be Used
 
 This story prepares the technical foundation for:

@@ -95,17 +95,21 @@ export async function registerOwner(prevState: any, formData: FormData) {
     return { error: 'An account with this email already exists. Please sign in instead.' }
   }
 
-  const userId = authData.user.id
+  const authUserId = authData.user.id
   let transactionFailed = false
 
   // 3. Drizzle Transaction
   try {
+    const { ensureAppUser } = await import('@/lib/auth/ensure-app-user')
+    const appUser = await ensureAppUser(authData.user)
+    const appUserId = appUser.id
+
     await db.transaction(async (tx) => {
       // Idempotency check: Does this user already have an organization?
       const existingMember = await tx
         .select({ id: organizationMembers.id })
         .from(organizationMembers)
-        .where(eq(organizationMembers.userId, userId))
+        .where(eq(organizationMembers.userId, appUserId))
         .limit(1)
 
       if (existingMember.length > 0) {
@@ -130,7 +134,7 @@ export async function registerOwner(prevState: any, formData: FormData) {
       // Insert Member
       await tx.insert(organizationMembers).values({
         organizationId: org.id,
-        userId: userId,
+        userId: appUserId,
         role: 'OWNER',
       })
     })
@@ -143,7 +147,7 @@ export async function registerOwner(prevState: any, formData: FormData) {
   if (transactionFailed) {
     try {
       const adminClient = createAdminClient()
-      await adminClient.auth.admin.deleteUser(userId)
+      await adminClient.auth.admin.deleteUser(authUserId)
     } catch (rollbackError) {
       console.error('CRITICAL: Failed to rollback user deletion', rollbackError)
     }

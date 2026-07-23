@@ -31,17 +31,21 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const isAuthRoute = request.nextUrl.pathname.startsWith('/login') ||
-    request.nextUrl.pathname.startsWith('/register') ||
-    request.nextUrl.pathname.startsWith('/verify-email') ||
-    request.nextUrl.pathname.startsWith('/forgot-password')
+  const pathname = request.nextUrl.pathname
+  // Strip locale prefix (e.g. /en/login -> /login)
+  const pathWithoutLocale = pathname.replace(/^\/(en|hi)(\/|$)/, '/')
 
-  const isProtectedRoute = request.nextUrl.pathname.startsWith('/app') ||
-    request.nextUrl.pathname.startsWith('/dashboard') ||
-    request.nextUrl.pathname.startsWith('/onboarding') ||
-    request.nextUrl.pathname.startsWith('/settings') ||
-    request.nextUrl.pathname.startsWith('/customers') ||
-    request.nextUrl.pathname.startsWith('/bookings')
+  const isAuthRoute = pathWithoutLocale.startsWith('/login') ||
+    pathWithoutLocale.startsWith('/register') ||
+    pathWithoutLocale.startsWith('/verify-email') ||
+    pathWithoutLocale.startsWith('/forgot-password')
+
+  const isProtectedRoute = pathWithoutLocale.startsWith('/app') ||
+    pathWithoutLocale.startsWith('/dashboard') ||
+    pathWithoutLocale.startsWith('/onboarding') ||
+    pathWithoutLocale.startsWith('/settings') ||
+    pathWithoutLocale.startsWith('/customers') ||
+    pathWithoutLocale.startsWith('/bookings')
 
   if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone()

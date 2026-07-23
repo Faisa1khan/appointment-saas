@@ -12,25 +12,20 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/ui/password-input'
+import { useTranslations } from 'next-intl'
 
 const formSchema = z.object({
-  firstName: z.string().min(2, {
-    message: 'First name must be at least 2 characters.',
-  }),
-  lastName: z.string().min(2, {
-    message: 'Last name must be at least 2 characters.',
-  }),
-  email: z.string().email({
-    message: 'Please enter a valid email address.',
-  }),
-  password: z.string().min(8, {
-    message: 'Password must be at least 8 characters.',
-  }),
+  firstName: z.string().min(2),
+  lastName: z.string().min(2),
+  email: z.string().email(),
+  password: z.string().min(8),
 })
 
 export function RegisterForm() {
   const router = useRouter()
   const [isPending, startTransition] = React.useTransition()
+  const t = useTranslations('auth.register')
+  const tErrors = useTranslations('auth.errors')
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -85,16 +80,16 @@ export function RegisterForm() {
     <div className="flex flex-col space-y-4">
       <div className="flex flex-col space-y-2 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">
-          Create an account
+          {t('title')}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Enter your details below to create your owner account and organization
+          {t('description')}
         </p>
       </div>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="firstName">First Name</Label>
+            <Label htmlFor="firstName">{t('firstNameLabel')}</Label>
             <Input
               id="firstName"
               placeholder="John"
@@ -103,12 +98,12 @@ export function RegisterForm() {
             />
             {form.formState.errors.firstName && (
               <p className="text-sm text-destructive font-medium">
-                {form.formState.errors.firstName.message}
+                {form.formState.errors.firstName.message || tErrors('generic')}
               </p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="lastName">Last Name</Label>
+            <Label htmlFor="lastName">{t('lastNameLabel')}</Label>
             <Input
               id="lastName"
               placeholder="Doe"
@@ -117,13 +112,13 @@ export function RegisterForm() {
             />
             {form.formState.errors.lastName && (
               <p className="text-sm text-destructive font-medium">
-                {form.formState.errors.lastName.message}
+                {form.formState.errors.lastName.message || tErrors('generic')}
               </p>
             )}
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t('emailLabel')}</Label>
           <Input
             id="email"
             type="email"
@@ -133,12 +128,12 @@ export function RegisterForm() {
           />
           {form.formState.errors.email && (
             <p className="text-sm text-destructive font-medium">
-              {form.formState.errors.email.message}
+              {tErrors('invalidEmail')}
             </p>
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{t('passwordLabel')}</Label>
           <PasswordInput
             id="password"
             placeholder="********"
@@ -147,17 +142,17 @@ export function RegisterForm() {
           />
           {form.formState.errors.password && (
             <p className="text-sm text-destructive font-medium">
-              {form.formState.errors.password.message}
+              {form.formState.errors.password.message || tErrors('passwordTooShort')}
             </p>
           )}
         </div>
         <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? 'Creating account...' : 'Create account'}
+          {isPending ? '...' : t('submitButton')}
         </Button>
         <div className="text-center text-sm">
-          Already have an account?{' '}
+          {t('hasAccount')}{' '}
           <Link href="/login" className="underline underline-offset-4 hover:text-primary">
-            Sign In
+            {t('loginLink')}
           </Link>
         </div>
       </form>

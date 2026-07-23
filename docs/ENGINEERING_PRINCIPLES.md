@@ -210,3 +210,40 @@ A story is complete only if:
 - [ ] TypeScript passes
 - [ ] ESLint passes
 - [ ] Production build succeeds
+
+---
+
+## Internationalization (i18n)
+
+Arrivo is designed for a global audience.
+
+No hardcoded user-facing strings.
+
+Every UI string must come from the translation system (`next-intl`).
+
+Exceptions:
+- Database content (e.g. Service names, Customer names, Organization names)
+- User-generated content
+- Logs
+- Developer messages
+
+The architecture supports:
+- Multiple languages
+- Locale detection
+- User language preference
+- RTL languages
+- Localized formatting (dates, times, numbers, currency)
+
+All contributors must refer to `docs/i18n-guidelines.md` for translation naming conventions, interpolation, and RTL styling guidelines.
+
+---
+
+## User Identity & Data Separation
+
+**Authentication identity** is owned by Supabase (`auth.users`).
+
+**Application identity** belongs to our own database tables (`public.app_users`).
+
+Never store long-term business or application state inside Supabase Auth metadata unless it is strictly authentication-related.
+
+All user preferences, profile information, and application settings must be stored in the application database (`public.app_users`). All application relationships (e.g., organizations, customers, bookings) should point to `app_users`, not directly to `auth.users`.

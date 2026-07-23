@@ -102,6 +102,29 @@ Owners register with email and password.
 
 After registration, the owner creates their organization.
 
+### Authentication Layer & Application Identity
+
+To keep authentication concerns separate from application data, Arrivo uses a canonical application user table (`app_users`). 
+
+```text
+Authentication Layer
+        │
+        ▼
+auth.users (Supabase)
+        │
+        ▼
+public.app_users
+        │
+        ├── organizations
+        ├── organization_members
+        ├── customers
+        ├── bookings
+        ├── staff
+        └── future modules
+```
+
+`app_users` is created on the first authenticated session and serves as the canonical record for user settings (e.g., Language, Theme, Timezone, Avatar, Display name).
+
 ### Customer Authentication
 
 Customers have two options:
