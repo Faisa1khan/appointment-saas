@@ -10,6 +10,8 @@ Every AI agent working on this project MUST follow these rules.
 
 Generic Multi-Tenant Appointment Booking SaaS
 
+The fundamental engineering principles for this project are defined in `docs/ENGINEERING_PRINCIPLES.md`. All agents and contributors MUST follow these principles before reading any other rules.
+
 ---
 
 # Technology Stack

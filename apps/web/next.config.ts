@@ -1,5 +1,12 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
+import withSerwistInit from "@serwist/next";
+
+const withSerwist = withSerwistInit({
+  swSrc: "app/sw.ts",
+  swDest: "public/sw.js",
+  disable: process.env.NODE_ENV === "development",
+});
 
 const nextConfig: NextConfig = {
   // Turbopack is enabled via `next dev --turbopack` (see package.json)
@@ -9,7 +16,7 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, {
+const sentryConfig = withSentryConfig(nextConfig, {
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
   authToken: process.env.SENTRY_AUTH_TOKEN,
@@ -21,3 +28,5 @@ export default withSentryConfig(nextConfig, {
   // This is disabled in development so Turbopack sends errors directly to Sentry.
   ...(process.env.NODE_ENV === "production" ? { tunnelRoute: "/monitoring" } : {}),
 });
+
+export default withSerwist(sentryConfig);

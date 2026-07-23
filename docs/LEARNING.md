@@ -1078,3 +1078,40 @@ We transformed the raw authentication functionality into a complete SaaS user ex
 - Complex routing and business logic belongs in Server Components.
 - A polished SaaS product never exposes raw backend errors to the user.
 - Consistent, isolated layouts (via Route Groups) improve maintainability.
+
+---
+
+# Story: E0-S7 - Engineering Principles & Platform Foundation
+
+## Date
+2026-07-23
+
+## Objective
+Establish permanent engineering standards, a fully mobile-first responsive baseline, complete theme support (Light/Dark/System), and configure the application as an installable Progressive Web App (PWA).
+
+## What We Built
+- Authored `docs/ENGINEERING_PRINCIPLES.md` as the constitution for future AI agents and contributors.
+- Updated `components/ui/button.tsx` and `components/ui/input.tsx` to use comfortable touch targets (44px min height).
+- Implemented `ThemeToggle` component with `next-themes` and added it to the authentication layout and landing page.
+- Configured `@serwist/next` to manage a Service Worker (`sw.ts`) with caching strategies for offline support.
+- Configured dynamic PWA app icons and `manifest.ts` using Next.js App Router built-ins.
+- Documented project architecture in `docs/ARCHITECTURE.md`.
+
+## Why We Built It This Way
+- **PWA & Mobile-First:** Building modern SaaS requires native-like experiences. Establishing touch targets and PWA capabilities early prevents massive refactoring later. `@serwist/next` is the modern successor to unmaintained PWA libraries and works flawlessly with the App Router.
+- **Principles Documentation:** To maintain consistency, having an explicit `ENGINEERING_PRINCIPLES.md` ensures all human and AI contributors are aligned on performance, accessibility, and design token usage.
+
+## Architecture Decisions
+- Use `@serwist/next` over legacy `next-pwa`.
+- Define `ThemeToggle` as a reusable component with `next-themes` rather than hardcoding.
+- Adjust Shadcn UI base primitives (`button`, `input`) directly for 44px touch targets rather than overriding them at the component usage site.
+
+## Concepts to Master
+- **Progressive Web App (PWA):** An application that behaves like a native app (installable, offline capable, splash screens) while being built with web technologies.
+- **Service Worker:** A background script that intercepts network requests, manages caching, and enables offline functionality.
+- **Touch Targets:** Apple HIG guidelines recommend 44x44pt minimum touch areas for all interactive elements to prevent accidental miss-clicks on mobile.
+
+## Key Takeaways
+- The foundation must be mobile-first and theme-aware *before* business features are built.
+- Service Workers provide resilience and performance.
+- Documentation (`ENGINEERING_PRINCIPLES.md`, `ARCHITECTURE.md`) is critical for scaling a codebase across multiple contributors.

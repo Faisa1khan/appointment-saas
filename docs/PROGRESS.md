@@ -10,19 +10,8 @@ Update this document whenever a story is completed.
 
 | Epic | Name | Progress | Status |
 |------|------|----------|--------|
-| E0 | Platform Foundation | 6 / 6 | ✅ Completed |
+| E0 | Platform Foundation | 7 / 7 | ✅ Completed |
 | E1 | Authentication & Onboarding | 2 / 7 | 🟡 In Progress |
-| E2 | Organization Settings | 0 / 7 | ⚪ Not Started |
-| E3 | Business Configuration | 0 / 5 | ⚪ Not Started |
-| E4 | Services Management | 0 / 5 | ⚪ Not Started |
-| E5 | Resources Management | 0 / 6 | ⚪ Not Started |
-| E6 | Customer Identity | 0 / 6 | ⚪ Not Started |
-| E7 | Availability Engine | 0 / 7 | ⚪ Not Started |
-| E8 | Bookings | 0 / 14 | ⚪ Not Started |
-| E9 | Walk-ins | 0 / 4 | ⚪ Not Started |
-| E10 | Public Booking Page | 0 / 8 | ⚪ Not Started |
-| E11 | Owner Dashboard | 0 / 8 | ⚪ Not Started |
-| E12 | Notifications | 0 / 8 | ⚪ Not Started |
 
 ---
 
@@ -54,6 +43,7 @@ Update this document whenever a story is completed.
 - ✅ E0-S4 – Enable RLS on all tenant-scoped tables with correct policies
 - ✅ E0-S5 – Configure Vercel deployment and CI/CD pipeline
 - ✅ E0-S6 – Configure error logging and monitoring
+- ✅ E0-S7 – Engineering Principles & Platform Foundation
 - ✅ E1-S1 – As an owner, I can register with email and password
 - ✅ E1-S1.5 – Authentication Experience Completion
 

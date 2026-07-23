@@ -2,6 +2,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { buttonVariants } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -12,7 +13,10 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background relative">
+      <div className="absolute top-4 right-4 md:top-8 md:right-8">
+        <ThemeToggle />
+      </div>
       <main className="flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8 space-y-8 max-w-3xl mx-auto">
         <div className="flex items-center gap-2 mb-4">
           <span className="bg-primary text-primary-foreground text-3xl font-bold rounded-lg p-2 h-12 w-12 flex items-center justify-center shadow-lg">A</span>

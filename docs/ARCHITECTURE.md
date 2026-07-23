@@ -458,3 +458,68 @@ These features are out of scope for the MVP:
 - Customer Preferences (preferred resource, preferred time)
 - Recurring Bookings
 - Waitlist (notify customer when a cancelled slot opens up)
+
+## Technical Architecture
+
+This section describes the physical implementation and technical stack of the platform.
+
+### Core Stack
+
+- **Framework**: Next.js (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS (v4) + shadcn/ui
+- **Database**: PostgreSQL (via Supabase)
+- **ORM**: Drizzle ORM
+- **Authentication**: Supabase Auth (Cookie-based)
+- **Deployment**: Vercel (recommended)
+
+### Directory Structure
+
+- `apps/web/`: The main Next.js web application.
+  - `app/`: Next.js App Router routes and pages.
+    - `(auth)/`: Grouped routes for authentication (Login, Register, Reset Password).
+    - `app/`: The authenticated application shell and routing (Dashboard, Onboarding).
+    - `api/`: API routes (if any).
+  - `components/`: Reusable UI components.
+    - `ui/`: shadcn/ui primitives.
+  - `lib/`: Utility functions, database configuration, and shared logic.
+  - `docs/`: Project documentation and learning journals.
+
+### Data Flow and State Management
+
+- **Server Components (RSC)**: By default, all components are Server Components. We fetch data directly on the server for performance and SEO.
+- **Client Components**: Only used for interactivity (forms, stateful UI, event listeners). They are marked with `"use client"`.
+- **Server Actions**: Mutations (e.g., form submissions, database updates) are handled via Next.js Server Actions. They provide a seamless RPC-like experience with built-in type safety.
+- **Form Validation**: Client-side and server-side validation are unified using Zod schemas. `react-hook-form` is used on the client alongside `@hookform/resolvers/zod`.
+
+### Technical Authentication
+
+While the user flows are described above, the technical implementation relies on `@supabase/ssr` to securely manage authentication tokens in HTTP cookies. This allows Server Components and Middleware to read the user's session without relying on browser `localStorage`. A Next.js middleware function refreshes these tokens automatically.
+
+### Progressive Web App (PWA) Foundation
+
+- Arrivo is fully installable as a PWA.
+- Uses `@serwist/next` to generate the Service Worker (`sw.ts`).
+- Supports offline caching (Network First for navigation, Stale-While-Revalidate for static assets).
+- Dynamic Manifest and App Icons via Next.js App Router features (`manifest.ts`, `icon.tsx`).
+
+### Theming and Design System
+
+- **Themes**: Full support for Light, Dark, and System (default) themes using `next-themes` and CSS variables.
+- **Design Tokens**: All colors, spacing, and sizing are defined using design tokens to maintain a consistent aesthetic.
+- **Mobile-First**: The UI is optimized for mobile screens (360px+) with comfortable touch targets (>= 44px min-height for interactive elements). Desktop layouts progressively enhance the mobile experience.
+
+### Error Handling & Observability
+
+- **Sentry**: Integrated for application monitoring and error tracking.
+- **Server Action Responses**: All Server Actions return a standardized response format:
+  ```typescript
+  {
+    success?: boolean;
+    error?: string;
+    fieldErrors?: Record<string, string[]>;
+    data?: T;
+    redirectUrl?: string;
+  }
+  ```
+- **Toasts**: Client-side notifications are handled by `sonner` for a clean, non-intrusive user experience.

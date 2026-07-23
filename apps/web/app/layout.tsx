@@ -21,6 +21,12 @@ export const metadata: Metadata = {
   },
   description:
     "Modern multi-tenant booking and reservation platform for service businesses.",
+  applicationName: "Arrivo",
+  appleWebApp: {
+    capable: true,
+    title: "Arrivo",
+    statusBarStyle: "default",
+  },
 };
 
 import { SentryProvider } from "./sentry-provider";
