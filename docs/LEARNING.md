@@ -1249,3 +1249,56 @@ Complete the authentication loop by wiring up a user interface for logging in an
 
 - Authentication state manipulation (logging in, logging out) should always rely on Server Actions when using Supabase SSR to guarantee cookies are updated correctly.
 - Layout files are the ideal place for global authenticated elements like Navigation bars and User Profiles.
+
+---
+
+## Epic 4: Story 1 - Services & Categories (The Foundation)
+
+### Objective
+Implement the core services and categories data models, business logic, and UI to allow businesses to manage what they offer.
+
+### What We Built
+1. **Schema**: `services` and `service_categories` with foreign keys, indexing, display ordering, and archiving capabilities.
+2. **Business Logic**: Robust Server Actions guarded by `organizationId` matching, ensuring tenant isolation. Atomic `displayOrder` updates using transaction-like arrays. Zod schemas handle strict validation for currency, duration, and color enums.
+3. **UI**: Extensible row-based list with optimistic reordering and archiving. Responsive Create/Edit dialogs wrapped in React Hook Form. Fully internationalized with `next-intl`.
+
+### Why We Built It This Way
+- **Reordering over Drag-and-Drop**: We deferred drag-and-drop to keep the MVP simple, accessible, and fast to build. "Move Up/Down" achieves the same goal without adding complex dependencies.
+- **Archiving over Deletion**: Hard deleting services breaks historical bookings. Archiving (`isActive: false`) keeps history intact while hiding it from active booking flows.
+- **Route simplicity**: The Next.js page acts only as a data fetcher. All complex state and UI is kept in the `features/services` module, allowing the component to be reused (e.g. in a future "Setup Wizard").
+
+### Concepts to Master
+- **Optimistic UI Updates**: Using React state to instantly reflect a change (like archiving or reordering) while the server processes the request in the background, rolling back if it fails.
+- **Tenant Isolation (RLS)**: Enforcing `where(eq(table.organizationId, userOrgId))` on every single database operation.
+
+### Technologies Introduced
+- **Shadcn UI (Tabs, Dialog, Select)**: Added for rapid, accessible UI development.
+- **React Hook Form & Zod**: For complex form state and strict payload validation before server actions run.
+
+### Best Practices
+- Build "bottom-up": Start with the schema, write the migrations, add Zod schemas, write the server actions, *then* build the UI.
+- Use atomic array-based reordering updates.
+- Keep the `app/` routes thin.
+
+### Key Takeaways
+Always build for the core business domain. Services are the foundational entity of the booking engine. If the foundation is solid, everything built on top of it will be easier to manage.
+
+---
+
+## Infrastructure: Disabling Turbopack for Local Development
+
+### Objective
+Ensure a stable local development environment without module resolution crashes.
+
+### What We Did
+Removed the `--turbopack` flag from the `dev` script in `apps/web/package.json`.
+
+### Why We Did It
+We encountered two distinct compatibility issues with Next.js Turbopack:
+1. **Sentry**: The `@sentry/nextjs` instrumentation uses `require-in-the-middle` (for OpenTelemetry), which currently throws a `Cannot find module` error during Turbopack's module evaluation.
+2. **Serwist**: The `@serwist/next` PWA integration explicitly warns that it does not support Turbopack yet.
+
+We prioritize a reliable, crash-free development environment over experimental build speeds. 
+
+### Key Takeaways
+Always test experimental compiler flags (like Turbopack) against your observability and PWA toolchains. Revisit enabling Turbopack once Sentry and Serwist announce stable support.
