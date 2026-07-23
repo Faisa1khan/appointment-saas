@@ -202,6 +202,8 @@ A story is complete only if:
 - [ ] Light theme supported
 - [ ] Dark theme supported
 - [ ] System theme supported
+- [ ] No hardcoded user-facing text
+- [ ] Internationalization complete for supported languages
 - [ ] Accessible
 - [ ] Keyboard navigable
 - [ ] Error states handled

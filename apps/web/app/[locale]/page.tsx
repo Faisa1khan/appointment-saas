@@ -15,6 +15,7 @@ export default async function HomePage() {
   }
 
   const t = await getTranslations('landing')
+  const tCommon = await getTranslations('common')
   const tNav = await getTranslations('common.navigation')
 
   return (
@@ -24,9 +25,9 @@ export default async function HomePage() {
         <ThemeToggle />
       </div>
       <main className="flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8 space-y-8 max-w-3xl mx-auto flex-1 w-full">
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-8">
           <span className="bg-primary text-primary-foreground text-3xl font-bold rounded-lg p-2 h-12 w-12 flex items-center justify-center shadow-lg">A</span>
-          <span className="text-3xl font-bold tracking-tight">Arrivo</span>
+          <span className="text-3xl font-bold tracking-tight">{tCommon('brand.name')}</span>
         </div>
         
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground">

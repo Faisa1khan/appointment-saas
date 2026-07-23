@@ -7,5 +7,19 @@
   "navigation": {
     "login": "साइन इन करें",
     "register": "साइन अप करें"
+  },
+  "dashboard": {
+    "title": "डैशबोर्ड"
+  },
+  "userNav": {
+    "myProfile": "मेरी प्रोफ़ाइल",
+    "organizationSettings": "संगठन सेटिंग्स",
+    "keyboardShortcuts": "कीबोर्ड शॉर्टकट",
+    "helpAndDocumentation": "सहायता और दस्तावेज़",
+    "switchOrganization": "संगठन बदलें",
+    "signOut": "साइन आउट करें"
+  },
+  "brand": {
+    "name": "Arrivo"
   }
 }

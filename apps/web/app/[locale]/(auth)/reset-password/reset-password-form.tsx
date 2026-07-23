@@ -10,14 +10,17 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { PasswordInput } from '@/components/ui/password-input'
+import { useTranslations } from 'next-intl'
 
 const formSchema = z.object({
-  password: z.string().min(8, 'Password must be at least 8 characters.'),
+  password: z.string().min(8),
 })
 
 export function ResetPasswordForm() {
   const router = useRouter()
   const [isPending, startTransition] = React.useTransition()
+  const t = useTranslations('auth.resetPassword')
+  const tErrors = useTranslations('auth.errors')
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,14 +62,11 @@ export function ResetPasswordForm() {
   return (
     <div className="flex flex-col space-y-4">
       <div className="flex flex-col space-y-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Set new password</h1>
-        <p className="text-sm text-muted-foreground">
-          Please enter your new password below.
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
       </div>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="password">New Password</Label>
+          <Label htmlFor="password">{t('passwordLabel')}</Label>
           <PasswordInput
             id="password"
             placeholder="********"
@@ -75,12 +75,12 @@ export function ResetPasswordForm() {
           />
           {form.formState.errors.password && (
             <p className="text-sm text-destructive font-medium">
-              {form.formState.errors.password.message}
+              {tErrors('passwordTooShort')}
             </p>
           )}
         </div>
         <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? 'Updating...' : 'Update password'}
+          {isPending ? '...' : t('submitButton')}
         </Button>
       </form>
     </div>

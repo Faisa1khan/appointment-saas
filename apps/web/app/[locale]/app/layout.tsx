@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
-import { ensureAppUser } from "@/lib/auth/ensure-app-user"
+import { AppHeader } from "@/components/layout/app-header"
 
 export default async function AppLayout({
   children,
@@ -14,12 +14,12 @@ export default async function AppLayout({
     redirect("/login")
   }
 
-  // Ensure the canonical app_users record exists for this session
-  await ensureAppUser(user)
-
   return (
-    <div className="min-h-screen bg-background">
-      {children}
+    <div className="min-h-screen bg-background flex flex-col">
+      <AppHeader />
+      <main className="flex-1">
+        {children}
+      </main>
     </div>
   )
 }

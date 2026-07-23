@@ -1,6 +1,7 @@
 import { MailCheck } from 'lucide-react'
 import Link from 'next/link'
 import { buttonVariants } from '@/components/ui/button'
+import { getTranslations } from 'next-intl/server'
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -9,6 +10,7 @@ type Props = {
 export default async function VerifyEmailPage(props: Props) {
   const searchParams = await props.searchParams
   const email = searchParams.email as string | undefined
+  const t = await getTranslations('auth.verifyEmail')
 
   return (
     <div className="flex flex-col space-y-4">
@@ -18,17 +20,21 @@ export default async function VerifyEmailPage(props: Props) {
             <MailCheck className="h-6 w-6 text-primary" />
           </div>
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight">Check your email</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
         <p className="text-sm text-muted-foreground">
-          We&apos;ve sent a verification link to {email ? <span className="font-medium text-foreground">{email}</span> : 'your email address'}. Verify your email to continue.
+          {email 
+            ? t.rich('description', { 
+                email: () => <span className="font-medium text-foreground">{email}</span> 
+              }) 
+            : t('descriptionFallback')}
         </p>
       </div>
       <div className="space-y-4 pt-4">
         <p className="text-sm text-muted-foreground text-center">
-          Didn&apos;t receive the email? Check your spam folder or try registering again.
+          {t('notReceived')}
         </p>
         <Link href="/login" className={buttonVariants({ variant: 'outline', className: 'w-full' })}>
-          Return to login
+          {t('backToLogin')}
         </Link>
       </div>
     </div>

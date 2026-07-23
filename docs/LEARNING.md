@@ -1214,3 +1214,38 @@ Decouple organization creation from user registration and build a dedicated onbo
 - Registration (Identity) and Onboarding (Business Setup) are distinct concerns and should be decoupled.
 - Ask for the bare minimum during onboarding to accelerate time-to-value.
 - Use an authenticated layout (`app/layout.tsx`) to enforce data guarantees (like `ensureAppUser`) across all authenticated routes.
+
+---
+
+# Story: E1-S4 - Log In and Log Out
+
+## Date
+
+2026-07-23
+
+## Objective
+
+Complete the authentication loop by wiring up a user interface for logging in and logging out of the application securely.
+
+---
+
+## What We Built
+
+1. **Top Navigation Shell:** Introduced a persistent top navigation header within the authenticated layout (`app/[locale]/app/layout.tsx`).
+2. **UserNav Component:** Created `UserNav`, a dropdown menu that displays the authenticated user's avatar, name, and email.
+3. **Logout Wiring:** Wired the "Log out" button in `UserNav` to the server action (`logout()`), ensuring the Supabase cookie is invalidated and the user is redirected to the `/login` route.
+
+---
+
+## Why We Built It This Way
+
+**Centralized Layouts:** Placing the `UserNav` within the `app/[locale]/app/layout.tsx` guarantees that the logout functionality is globally accessible to all authenticated states (both onboarding and the main dashboard) without duplicating code across routes.
+
+**Secure Server Actions:** The `logout` action runs on the server, safely clearing the Supabase SSR auth cookies before instructing the client router to navigate away, preventing state synchronization issues.
+
+---
+
+## Key Takeaways
+
+- Authentication state manipulation (logging in, logging out) should always rely on Server Actions when using Supabase SSR to guarantee cookies are updated correctly.
+- Layout files are the ideal place for global authenticated elements like Navigation bars and User Profiles.

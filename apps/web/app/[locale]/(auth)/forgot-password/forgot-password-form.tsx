@@ -10,14 +10,18 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { useTranslations } from 'next-intl'
 
 const formSchema = z.object({
-  email: z.string().email('Please enter a valid email address.'),
+  email: z.string().email(),
 })
 
 export function ForgotPasswordForm() {
   const [isPending, startTransition] = React.useTransition()
   const [isSubmitted, setIsSubmitted] = React.useState(false)
+  const t = useTranslations('auth.forgotPassword')
+  const tErrors = useTranslations('auth.errors')
+  const tVerify = useTranslations('auth.verifyEmail')
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,13 +61,13 @@ export function ForgotPasswordForm() {
   if (isSubmitted) {
     return (
       <div className="flex flex-col space-y-4 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Check your email</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{tVerify('title')}</h1>
         <p className="text-sm text-muted-foreground">
-          We have sent a password reset link to your email address.
+          {tVerify('descriptionFallback')}
         </p>
         <div className="pt-4">
-          <Link href="/login" className="text-sm underline underline-offset-4 hover:text-primary">
-            Return to sign in
+          <Link href="/login" className="text-sm underline underline-offset-4 hover:text-primary min-h-[44px] flex items-center justify-center">
+            {tVerify('backToLogin')}
           </Link>
         </div>
       </div>
@@ -73,14 +77,14 @@ export function ForgotPasswordForm() {
   return (
     <div className="flex flex-col space-y-4">
       <div className="flex flex-col space-y-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Reset password</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
         <p className="text-sm text-muted-foreground">
-          Enter your email address and we will send you a reset link.
+          {t('description')}
         </p>
       </div>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t('emailLabel')}</Label>
           <Input
             id="email"
             type="email"
@@ -90,16 +94,16 @@ export function ForgotPasswordForm() {
           />
           {form.formState.errors.email && (
             <p className="text-sm text-destructive font-medium">
-              {form.formState.errors.email.message}
+              {tErrors('invalidEmail')}
             </p>
           )}
         </div>
         <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? 'Sending link...' : 'Send reset link'}
+          {isPending ? '...' : t('submitButton')}
         </Button>
         <div className="text-center text-sm">
-          <Link href="/login" className="underline underline-offset-4 hover:text-primary">
-            Back to sign in
+          <Link href="/login" className="underline underline-offset-4 hover:text-primary min-h-[44px] flex items-center justify-center">
+            {t('backToLogin')}
           </Link>
         </div>
       </form>

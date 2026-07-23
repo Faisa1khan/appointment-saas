@@ -2,6 +2,7 @@ import { AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { getTranslations } from 'next-intl/server'
 
 export default async function AuthErrorPage({
   searchParams,
@@ -11,6 +12,8 @@ export default async function AuthErrorPage({
   const resolvedParams = await searchParams
   const errorType = resolvedParams.error as string | undefined
   let message = resolvedParams.message as string | undefined
+  const t = await getTranslations('auth.errorPage')
+  const tCommon = await getTranslations('common.navigation')
 
   // Map common Supabase error types to friendly messages
   if (errorType === 'otp_expired' || errorType === 'access_denied') {
@@ -31,22 +34,19 @@ export default async function AuthErrorPage({
                 <AlertTriangle className="h-6 w-6 text-destructive" />
               </div>
             </div>
-            <CardTitle className="text-2xl">Authentication Error</CardTitle>
+            <CardTitle className="text-2xl">{t('title')}</CardTitle>
             <CardDescription className="text-base mt-2">
               {message}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4 pt-2">
-              <p className="text-sm text-muted-foreground">
-                Please try registering again or contact support if the issue persists.
-              </p>
               <div className="flex flex-col gap-2">
-                <Link href="/register" className={buttonVariants({ className: 'w-full' })}>
-                  Register Again
+                <Link href="/register" className={buttonVariants({ className: 'w-full min-h-[44px]' })}>
+                  {tCommon('register')}
                 </Link>
-                <Link href="/login" className={buttonVariants({ variant: 'outline', className: 'w-full' })}>
-                  Return to Login
+                <Link href="/login" className={buttonVariants({ variant: 'outline', className: 'w-full min-h-[44px]' })}>
+                  {tCommon('login')}
                 </Link>
               </div>
             </div>

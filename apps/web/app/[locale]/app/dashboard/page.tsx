@@ -4,8 +4,10 @@ import { db } from "@/lib/db"
 import { organizationMembers, organizations } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { ensureAppUser } from "@/lib/auth/ensure-app-user"
+import { getTranslations } from "next-intl/server"
 
 export default async function DashboardPage() {
+  const t = await getTranslations("common.dashboard")
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -32,7 +34,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold">Dashboard</h1>
+      <h1 className="text-3xl font-bold">{t('title')}</h1>
       <p className="mt-4 text-muted-foreground">Welcome back to {org.name}!</p>
     </div>
   )

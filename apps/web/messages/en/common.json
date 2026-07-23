@@ -7,5 +7,19 @@
   "navigation": {
     "login": "Sign in",
     "register": "Sign up"
+  },
+  "dashboard": {
+    "title": "Dashboard"
+  },
+  "userNav": {
+    "myProfile": "My Profile",
+    "organizationSettings": "Organization Settings",
+    "keyboardShortcuts": "Keyboard Shortcuts",
+    "helpAndDocumentation": "Help & Documentation",
+    "switchOrganization": "Switch Organization",
+    "signOut": "Sign Out"
+  },
+  "brand": {
+    "name": "Arrivo"
   }
 }
