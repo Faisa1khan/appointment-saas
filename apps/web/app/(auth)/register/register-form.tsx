@@ -7,16 +7,11 @@ import { z } from 'zod'
 import { registerOwner } from '@/app/actions/auth'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { PasswordInput } from '@/components/ui/password-input'
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -87,80 +82,85 @@ export function RegisterForm() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-2xl">Register your business</CardTitle>
-        <CardDescription>
-          Enter your details below to create your owner account and organization.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
-              <Input
-                id="firstName"
-                placeholder="John"
-                disabled={isPending}
-                {...form.register('firstName')}
-              />
-              {form.formState.errors.firstName && (
-                <p className="text-sm text-destructive font-medium">
-                  {form.formState.errors.firstName.message}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
-              <Input
-                id="lastName"
-                placeholder="Doe"
-                disabled={isPending}
-                {...form.register('lastName')}
-              />
-              {form.formState.errors.lastName && (
-                <p className="text-sm text-destructive font-medium">
-                  {form.formState.errors.lastName.message}
-                </p>
-              )}
-            </div>
-          </div>
+    <div className="flex flex-col space-y-4">
+      <div className="flex flex-col space-y-2 text-center">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Create an account
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Enter your details below to create your owner account and organization
+        </p>
+      </div>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="firstName">First Name</Label>
             <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
+              id="firstName"
+              placeholder="John"
               disabled={isPending}
-              {...form.register('email')}
+              {...form.register('firstName')}
             />
-            {form.formState.errors.email && (
+            {form.formState.errors.firstName && (
               <p className="text-sm text-destructive font-medium">
-                {form.formState.errors.email.message}
+                {form.formState.errors.firstName.message}
               </p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="lastName">Last Name</Label>
             <Input
-              id="password"
-              type="password"
-              placeholder="********"
+              id="lastName"
+              placeholder="Doe"
               disabled={isPending}
-              {...form.register('password')}
+              {...form.register('lastName')}
             />
-            {form.formState.errors.password && (
+            {form.formState.errors.lastName && (
               <p className="text-sm text-destructive font-medium">
-                {form.formState.errors.password.message}
+                {form.formState.errors.lastName.message}
               </p>
             )}
           </div>
-          <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? 'Creating account...' : 'Create account'}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="m@example.com"
+            disabled={isPending}
+            {...form.register('email')}
+          />
+          {form.formState.errors.email && (
+            <p className="text-sm text-destructive font-medium">
+              {form.formState.errors.email.message}
+            </p>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <PasswordInput
+            id="password"
+            placeholder="********"
+            disabled={isPending}
+            {...form.register('password')}
+          />
+          {form.formState.errors.password && (
+            <p className="text-sm text-destructive font-medium">
+              {form.formState.errors.password.message}
+            </p>
+          )}
+        </div>
+        <Button type="submit" className="w-full" disabled={isPending}>
+          {isPending ? 'Creating account...' : 'Create account'}
+        </Button>
+        <div className="text-center text-sm">
+          Already have an account?{' '}
+          <Link href="/login" className="underline underline-offset-4 hover:text-primary">
+            Sign In
+          </Link>
+        </div>
+      </form>
+    </div>
   )
 }

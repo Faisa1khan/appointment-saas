@@ -914,3 +914,167 @@ We also built a responsive registration UI (`apps/web/app/register/page.tsx` and
 
 - Catching errors early and natively at the framework level (via `instrumentation.ts` and `withSentryConfig`) provides the most reliable error tracking for Next.js.
 - Our foundation (Epic 0) is now complete: we have UI, Auth, DB, Migrations, CI/CD, and Monitoring.
+
+
+---
+
+# Story: E1-S1.5 - Authentication Experience Completion
+
+## Date
+
+2026-07-23
+
+## Objective
+
+Polish the authentication experience to ensure a seamless, production-ready journey before advancing to organization onboarding (E1-S2). This includes creating a modern landing page, properly routing authenticated vs. unauthenticated users, improving error handling, and implementing an explicit email verification step.
+
+---
+
+## Prerequisites
+
+- Next.js 15 App Router architecture.
+- React Server Components and Client Components.
+- Supabase Authentication (Server-Side).
+- Zod validation and React Hook Form.
+
+---
+
+## What We Built
+
+We transformed the raw authentication functionality into a complete SaaS user experience:
+- **Landing Page (`app/page.tsx`):** A modern, aesthetically pleasing entry point for unauthenticated users, with clear Call To Action (CTA) buttons. Authenticated users are automatically redirected to the internal app router.
+- **Route Reorganization:** Moved authentication pages (`login`, `register`, `verify-email`) into an `(auth)` route group with a shared `layout.tsx` for consistent centering and branding.
+- **Authentication Router (`app/app/page.tsx`):** A centralized Server Component router that acts as the entry point for authenticated users. It checks if the user belongs to an organization and redirects them to either `/dashboard` or `/onboarding`.
+- **Next.js Middleware (`middleware.ts`):** A lightweight route guard that strictly checks for the presence of a Supabase session and enforces basic access control (unauthenticated users to `/login`, authenticated users away from auth routes to `/app`).
+- **Normalized Error Handling:** Replaced raw Supabase errors with friendly, actionable error messages (e.g., "An account with this email already exists. Please sign in instead.") and added field-level validation mapping.
+- **Manual Email Verification Flow:** Configured the `auth/callback/route.ts` to explicitly log the user out after exchanging the email verification code, forcing them to manually log in. This ensures a consistent, predictable user journey.
+
+---
+
+## Why We Built It This Way
+
+**Centralized App Router (`/app`):** Instead of scattering complex routing logic (like checking organization membership) inside Next.js Middleware or individual pages, we created a single `/app` entry point. Middleware should only answer "Is the user authenticated? Yes/No". The `/app` page handles the "Where should they go based on their business state?" logic. This keeps Middleware fast and maintainable.
+
+**Explicit Email Verification Flow:** While auto-logging users in after clicking an email link is possible, it often creates confusion across different devices or browsers. Forcing a manual login after verification provides a predictable state flow and trains the user to use the login page.
+
+**Route Groups (`(auth)`):** Grouping routes inside parenthesis prevents them from affecting the URL path (so `/(auth)/login` becomes just `/login`), while allowing them to share a common `layout.tsx`. This is perfect for keeping the main application layout separate from the minimalist authentication layout.
+
+---
+
+## Architecture Decisions
+
+- **Decision:** Keep Next.js Middleware strictly focused on session verification (Auth state only).
+  - **Reason:** Middleware runs on the Edge and blocks every request. Querying the database to check organization status in Middleware would add latency to every page load.
+  - **Trade-offs:** We need an intermediary route (`/app`) to handle the business-logic redirects.
+- **Decision:** Use a `PasswordInput` component wrapping a standard `Input`.
+  - **Reason:** Separating the show/hide password logic into an isolated component prevents unnecessary re-renders in the parent form and keeps the form code clean.
+
+---
+
+## Concepts to Master
+
+### Next.js Middleware (`middleware.ts`)
+- **What it is:** A function that runs before a request is completed, allowing you to modify the response or redirect the user.
+- **Why we need it:** To instantly protect private routes (`/dashboard`, `/settings`) without having to write authentication checks in every single Server Component.
+- **Where it is used:** `apps/web/middleware.ts` intercepts requests, delegates to Supabase for token refresh, and executes fast redirects.
+
+### Next.js Route Groups `(folderName)`
+- **What it is:** A way to logically organize routes and layouts without affecting the URL structure.
+- **Why we need it:** We want a specific centered, minimalist layout for Login and Register pages that doesn't include the main application's sidebar or navigation header.
+
+### Zod to React Hook Form Error Mapping
+- **What it is:** The process of taking backend validation errors (like "Email already exists") and attaching them directly to the corresponding input field on the frontend.
+- **How it works:** Our Server Action returns `fieldErrors` or a general `error`. The client-side form uses `form.setError('fieldName', { message: '...' })` to display the error exactly where the user made the mistake.
+
+---
+
+## Vocabulary
+
+- **Route Guard:** Logic (often in Middleware) that prevents unauthorized access to a page.
+- **Idempotency:** An operation that produces the same result no matter how many times it's executed. In authentication, registering an existing email should safely fail with a consistent error rather than crashing the system.
+- **Server Action:** An asynchronous function executed on the server, typically triggered by a form submission or button click on the client.
+
+---
+
+## Files to Study
+
+- **`apps/web/middleware.ts` & `apps/web/lib/supabase/middleware.ts`**
+  - **Purpose:** Enforces authentication route guards. Notice how it strictly checks `user` existence and avoids querying the database.
+- **`apps/web/app/app/page.tsx`**
+  - **Purpose:** The business-logic router. Notice how it checks the `organizationMembers` table and redirects accordingly.
+- **`apps/web/app/auth/callback/route.ts`**
+  - **Purpose:** Handles the email verification code exchange. Notice the explicit `await supabase.auth.signOut()` to enforce the manual login flow.
+- **`apps/web/app/(auth)/layout.tsx`**
+  - **Purpose:** The shared layout providing the centered, aesthetic wrapper for all authentication forms.
+
+---
+
+## Technologies Introduced
+
+- **Lucide React (`lucide-react`)**: A lightweight, highly customizable SVG icon library. Used here for the `Eye` and `EyeOff` icons in the password input.
+
+---
+
+## Best Practices Learned
+
+- **Never Leak Raw Backend Errors:** Raw errors from tools like Supabase (e.g., `duplicate key value violates unique constraint`) are intimidating and unhelpful to users. Always normalize them into friendly, actionable messages like "An account with this email already exists."
+- **Fast Middleware:** Keep Middleware as fast and simple as possible. Defer heavy database queries and complex branching logic to standard Server Components (like our `/app` router).
+- **Responsive Layouts:** Even for simple auth forms, use Tailwind classes like `w-full max-w-sm` to ensure the form looks good on both mobile and desktop screens.
+
+---
+
+## Common Mistakes
+
+- **Putting Business Logic in Middleware:** Querying the database to check if a user has an organization inside `middleware.ts` slows down the entire application because it executes on every single route change.
+- **Missing Loading States:** Failing to disable the submit button during a network request often leads to users clicking the button multiple times, triggering duplicate API calls.
+
+---
+
+## Where This Will Be Used
+
+- **Epic 1 (Onboarding):** Users will transition smoothly from this polished authentication experience into the organization onboarding flow (E1-S2).
+- **Every Application Entry:** This establishes the permanent front door to Arrivo. Every user will interact with these flows and layouts daily.
+
+---
+
+## Common Interview Questions
+
+**Q: Why shouldn't you put database queries or complex business logic inside Next.js Middleware?**
+**A:** Middleware executes on every request matching its configuration (often on the Edge). Adding database queries increases latency across the entire application and can exhaust connection pools. Business logic is better handled in Server Components where data fetching is localized to the specific route.
+
+**Q: How do Route Groups `(folder)` help with layouts in Next.js?**
+**A:** Route groups allow you to organize files and define shared layouts without altering the URL path. For example, `app/(auth)/login/page.tsx` maps to `/login`, but it will use the `layout.tsx` defined specifically inside the `(auth)` folder, separate from the main application layout.
+
+---
+
+## Exercises
+
+1. **Test the Error Handling:** Attempt to register a new account using an email that you have already registered. Observe how the normalized error message appears on the frontend.
+2. **Trace the Middleware Redirect:** Log out, then try to manually navigate to `http://localhost:3000/dashboard` in your browser. Watch the network tab in your developer tools to see how the Next.js Middleware intercepts the request and issues an immediate 307 Temporary Redirect to `/login`.
+3. **Inspect the Route Guard:** Log in successfully, then attempt to navigate back to `http://localhost:3000/login`. Observe how you are instantly redirected to `/app`, which then redirects you to your appropriate destination.
+
+---
+
+## Further Reading
+
+- [Next.js Route Groups](https://nextjs.org/docs/app/building-your-application/routing/route-groups)
+- [Next.js Middleware](https://nextjs.org/docs/app/building-your-application/routing/middleware)
+- [React Hook Form Error Handling](https://react-hook-form.com/docs/useform/seterror)
+
+---
+
+## Revision Checklist
+
+- [ ] I understand the difference in responsibility between Next.js Middleware and a Server Component Router (like `/app`).
+- [ ] I can explain the purpose of Next.js Route Groups.
+- [ ] I know how to normalize a backend error and map it to a frontend input field.
+- [ ] I can describe the explicit email verification flow and why we enforce a manual login.
+
+---
+
+## Key Takeaways
+
+- Middleware should be fast and strictly handle authentication boundaries.
+- Complex routing and business logic belongs in Server Components.
+- A polished SaaS product never exposes raw backend errors to the user.
+- Consistent, isolated layouts (via Route Groups) improve maintainability.
