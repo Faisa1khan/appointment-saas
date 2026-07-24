@@ -1569,3 +1569,25 @@ We implemented a robust service management module, which includes:
 **Key Takeaways**:
 - Always enforce uniqueness in BOTH the business logic layer (for UX) and the database level (for data integrity).
 - Always consider the migration path for existing data when modifying database schemas in a production-like environment.
+
+## E2.3-S1: Add Staff Members (Bookable Resources)
+
+**Objective**
+Implement the ability for an organization owner to manage bookable staff members, maintaining the established feature-oriented architecture pattern.
+
+**What We Built**
+We built a Staff Management feature (`features/staff`) focusing strictly on bookable resources rather than authenticated users. It supports creating, editing, activating/deactivating, and reordering staff members. We included support for avatar URLs and colors for future UI integration (e.g., calendar views). We updated the database schema for the `resources` table to include `slug`, `color`, `avatar_url`, and `display_order`, providing a safe fallback migration for the newly enforced unique `slug`.
+
+**Why We Built It This Way**
+We adhered to the architectural precedent set by the Services feature, keeping the UI strictly presentation-focused and delegating all business logic to `staff-management.service.ts`. Staff names can be duplicated within an organization, but slugs must be unique, so we leveraged the centralized `slugify` logic in conjunction with a counter mechanism to resolve collisions safely. Authentication and scheduling were deliberately scoped out of this phase to reduce MVP complexity and decouple the domain models.
+
+**Technologies Introduced**
+- **Drizzle safe migrations:** Backfilling constraints on live schemas safely.
+
+**Architecture Decisions**
+- Staff members are treated as purely bookable `resources` (type = STAFF). Auth and organization membership are handled separately to avoid tight coupling between a "login user" and a "calendar entity".
+- **Soft Deactivation**: Inactive staff disappear from booking selection but remain visible in the admin area, preserving historical bookings tied to them. This fulfills our "no hard deletes" policy for core domain entities.
+
+**Where This Will Be Used & Future Relations**
+- **Service ↔ Staff Assignment**: The immediate next step is establishing a many-to-many relationship (`staff_services`). Not every staff member performs every service, which is critical foundational data for the booking engine.
+- This will also be used when configuring business availability, where specific staff schedules can override generic business hours.

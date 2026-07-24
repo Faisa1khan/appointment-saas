@@ -235,7 +235,11 @@ export const resources = pgTable(
       .notNull()
       .references(() => organizations.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),
+    slug: text('slug').notNull(),
     type: text('type'),
+    color: text('color'),
+    avatarUrl: text('avatar_url'),
+    displayOrder: integer('display_order').notNull().default(0),
     isActive: boolean('is_active').notNull().default(true),
     createdAt: timestamp('created_at', { withTimezone: true })
       .notNull()
@@ -246,6 +250,7 @@ export const resources = pgTable(
   },
   (table) => [
     index('resources_org_active_idx').on(table.organizationId, table.isActive),
+    uniqueIndex('resources_org_slug_idx').on(table.organizationId, table.slug),
   ]
 )
 
@@ -416,5 +421,8 @@ export const bookingServices = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (table) => [index('booking_services_booking_id_idx').on(table.bookingId)]
+  (table) => [
+    index('booking_services_booking_id_idx').on(table.bookingId),
+    index('booking_services_service_id_idx').on(table.serviceId)
+  ]
 )

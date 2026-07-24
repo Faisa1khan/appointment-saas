@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { LayoutDashboard, Scissors } from "lucide-react"
+import { LayoutDashboard, Scissors, Users } from "lucide-react"
 
 import {
   Sidebar,
@@ -48,6 +48,12 @@ export function AppSidebar() {
                 <SidebarMenuButton render={<Link href="/app/services" onClick={handleNavClick} />} size="lg">
                     <Scissors className="size-5" />
                     <span className="text-base font-medium">Services</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton render={<Link href="/app/staff" onClick={handleNavClick} />} size="lg">
+                    <Users className="size-5" />
+                    <span className="text-base font-medium">Staff</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

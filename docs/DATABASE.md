@@ -207,13 +207,18 @@ Anything that can be reserved — a person, room, or asset.
 | `id` | `uuid` | PK, DEFAULT `gen_random_uuid()` | |
 | `organization_id` | `uuid` | NOT NULL, FK → `organizations(id)` ON DELETE CASCADE | |
 | `name` | `text` | NOT NULL | e.g. "Barber 1", "Room A", "Court 2" |
+| `slug` | `text` | NOT NULL | Unique per org, URL-friendly identifier |
 | `type` | `text` | | Informational only. Not used in business logic. |
+| `color` | `text` | | Predefined palette color |
+| `avatar_url` | `text` | | Profile image for staff |
+| `display_order` | `integer` | NOT NULL, DEFAULT `0` | Controls ordering in the UI |
 | `is_active` | `boolean` | NOT NULL, DEFAULT `true` | Inactive resources are hidden from availability |
 | `created_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | |
 | `updated_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | |
 
 **Indexes:**
 - Index on `(organization_id, is_active)`
+- Unique Index on `(organization_id, slug)`
 
 **RLS:** Readable by anyone with the org's booking link. Writable by org members.
 

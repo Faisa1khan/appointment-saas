@@ -1,0 +1,1 @@
+CREATE INDEX "booking_services_service_id_idx" ON "booking_services" USING btree ("service_id");

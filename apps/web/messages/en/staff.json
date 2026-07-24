@@ -1,0 +1,54 @@
+{
+  "title": "Staff",
+  "subtitle": "Manage your team members and resources",
+  "addStaff": "Add Staff",
+  "empty": {
+    "title": "Add your first staff member",
+    "description": "Staff members are bookable resources. Add your team to start taking bookings."
+  },
+  "status": {
+    "active": "Active",
+    "archived": "Archived"
+  },
+  "actions": {
+    "edit": "Edit",
+    "archive": "Archive",
+    "restore": "Restore",
+    "moveUp": "Move Up",
+    "moveDown": "Move Down",
+    "more": "More options"
+  },
+  "form": {
+    "createTitle": "Add Staff Member",
+    "editTitle": "Edit Staff Member",
+    "name": "Name",
+    "namePlaceholder": "e.g., Jane Doe",
+    "color": "Color",
+    "avatarUrl": "Avatar URL",
+    "avatarUrlPlaceholder": "https://example.com/avatar.jpg",
+    "save": "Save Staff",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "colors": {
+      "blue": "Blue",
+      "green": "Green",
+      "orange": "Orange",
+      "purple": "Purple",
+      "pink": "Pink",
+      "red": "Red",
+      "yellow": "Yellow",
+      "gray": "Gray"
+    }
+  },
+  "messages": {
+    "created": "Staff member created successfully.",
+    "updated": "Staff member updated successfully.",
+    "archived": "Staff member archived.",
+    "restored": "Staff member restored.",
+    "error": "An error occurred. Please try again."
+  },
+  "tabs": {
+    "active": "Active",
+    "archived": "Archived"
+  }
+}

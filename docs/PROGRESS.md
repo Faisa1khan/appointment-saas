@@ -28,11 +28,11 @@ Update this document whenever a story is completed.
 
 # Current Story
 
-**Story ID:** E2.2-S1
+**Story ID:** E2.3-S1
 
-**Title:** Set weekly business hours
+**Title:** Add staff members and custom schedules (Phase 1: Staff Resources)
 
-**Status:** 🟡 In Progress
+**Status:** ✅ Completed
 
 ---
 
@@ -56,13 +56,16 @@ Update this document whenever a story is completed.
 - ✅ Feature Capability System – Implemented a configuration-driven UI system for feature availability mapping.
 - ✅ E2.1-S1 – Service Management (CRUD operations and ordering)
 - ✅ E2.1-S2 – Service Categories (Create/Edit/Assign)
+- ✅ E2.3-S1 – Add staff members (Bookable Resources)
 
 ---
 
 # Upcoming Stories
 
+- ⏳ E2.3-S2 – Service ↔ Staff assignment (Many-to-many relationship)
+- ⏳ E2.2-S1 – Set weekly business hours
 - ⏳ E2.2-S2 – Mark specific days or dates as closed (holidays)
-- ⏳ E2.3-S1 – Add staff members and custom schedules
+- ⏳ E2.3-S3 – Staff availability overrides
 - ⏳ E2.4-S1 – Backend generates appointment slots with rules engine
 - ⏳ E2.4-S2 – Backend conflict detection and atomic validation
 - ⏳ E2.4-S3 – Create, reschedule, and cancel bookings
