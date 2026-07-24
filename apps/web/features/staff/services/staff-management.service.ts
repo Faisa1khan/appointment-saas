@@ -65,19 +65,11 @@ export async function createNewStaffMember(
 export async function updateExistingStaffMember(
   id: string,
   organizationId: string,
-  data: Partial<Omit<NewStaff, 'organizationId' | 'slug' | 'type'>>,
-  currentSlug: string
+  data: Partial<Omit<NewStaff, 'organizationId' | 'slug' | 'type'>>
 ): Promise<ServiceResult<Staff>> {
   try {
-    let newSlug = currentSlug
-
-    if (data.name) {
-      newSlug = await generateUniqueSlug(organizationId, data.name, currentSlug)
-    }
-
     const updated = await updateStaff(id, organizationId, {
-      ...data,
-      slug: newSlug
+      ...data
     })
 
     if (!updated) {

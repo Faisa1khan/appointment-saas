@@ -61,7 +61,7 @@ export async function updateStaffAction(id: string, data: StaffFormData) {
       ...validated.data,
       color: validated.data.color || null,
       avatarUrl: validated.data.avatarUrl || null
-    }, existing.slug)
+    })
 
     if (result.success) {
       revalidatePath('/app/staff')
