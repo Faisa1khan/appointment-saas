@@ -2,7 +2,7 @@
 
 import { z } from "zod"
 import { db } from "@/lib/db"
-import { organizations, organizationMembers, appUsers, serviceCategories } from "@/lib/db/schema"
+import { organizations, organizationMembers, appUsers, serviceCategories, businessHours } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import { createClient } from "@/lib/supabase/server"
 
@@ -98,6 +98,20 @@ export async function completeOnboarding(formData: z.infer<typeof onboardingSche
         organizationId: org.id,
         name: 'General',
       })
+
+      // Seed default Business Hours (Mon-Fri 09:00-18:00, Sat-Sun Closed)
+      const defaultHours = []
+      for (let day = 0; day <= 6; day++) {
+        const isWeekend = day === 0 || day === 6
+        defaultHours.push({
+          organizationId: org.id,
+          dayOfWeek: day,
+          isClosed: isWeekend,
+          openTime: isWeekend ? null : '09:00:00',
+          closeTime: isWeekend ? null : '18:00:00',
+        })
+      }
+      await tx.insert(businessHours).values(defaultHours)
     })
 
     return { success: true }

@@ -6,8 +6,9 @@ import { createClient } from "@/lib/supabase/server"
 import { eq, desc, asc } from "drizzle-orm"
 import { ServicesView } from "@/features/services/components/services-view"
 
-export async function generateMetadata({ params: { locale } }: { params: { locale: string } }) {
-  const t = await getTranslations({ locale, namespace: "services" })
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const resolvedParams = await params;
+  const t = await getTranslations({ locale: resolvedParams.locale, namespace: "services" })
   return { title: `${t("title")} | Arrivo` }
 }
 
