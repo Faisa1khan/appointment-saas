@@ -150,16 +150,25 @@ A bookable service offered by an organization.
 |---|---|---|---|
 | `id` | `uuid` | PK, DEFAULT `gen_random_uuid()` | |
 | `organization_id` | `uuid` | NOT NULL, FK → `organizations(id)` ON DELETE CASCADE | |
+| `category_id` | `uuid` | NULLABLE, FK → `service_categories(id)` ON DELETE SET NULL | Optional grouping |
 | `name` | `text` | NOT NULL | e.g. "Haircut", "Consultation" |
+| `slug` | `text` | NOT NULL | Unique per org, URL-friendly identifier |
 | `description` | `text` | | Optional description |
 | `duration` | `integer` | NOT NULL | Duration in minutes |
-| `price` | `integer` | NOT NULL, DEFAULT `0` | Price in smallest currency unit (e.g. cents) |
+| `price` | `integer` | NOT NULL, DEFAULT `0` | Price in smallest currency unit (e.g. cents). Currency dictated by org. |
+| `color` | `text` | | Predefined palette hex code for UI |
+| `display_order` | `integer` | NOT NULL, DEFAULT `0` | Controls ordering in the UI |
 | `is_active` | `boolean` | NOT NULL, DEFAULT `true` | Inactive services cannot be booked |
+| `buffer_before_minutes` | `integer` | NOT NULL, DEFAULT `0` | Buffer time before appointment |
+| `buffer_after_minutes` | `integer` | NOT NULL, DEFAULT `0` | Buffer time after appointment |
 | `created_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | |
 | `updated_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | |
 
 **Indexes:**
 - Index on `(organization_id, is_active)`
+- Index on `(category_id)`
+- Unique Index on `(organization_id, name)`
+- Unique Index on `(organization_id, slug)`
 
 **RLS:** Readable by anyone with the organization's public booking link. Writable by org members.
 

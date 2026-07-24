@@ -28,9 +28,9 @@ Update this document whenever a story is completed.
 
 # Current Story
 
-**Story ID:** E2.1-S1
+**Story ID:** E2.1-S2
 
-**Title:** Service Management (CRUD operations and ordering)
+**Title:** Service Categories (Create/Edit/Assign)
 
 **Status:** 🟡 In Progress
 
@@ -54,12 +54,12 @@ Update this document whenever a story is completed.
 - ✅ Platform Compliance Audit – Resolved all remaining hardcoded UI text, theming issues, and applied strict Definition of Done
 - ✅ Regionalization & Localization Standards – Established ADR-012, organization-level currency, locale, timezone, and week start day settings.
 - ✅ Feature Capability System – Implemented a configuration-driven UI system for feature availability mapping.
+- ✅ E2.1-S1 – Service Management (CRUD operations and ordering)
 
 ---
 
 # Upcoming Stories
 
-- ⏳ E2.1-S2 – Service Categories (Create/Edit/Assign)
 - ⏳ E2.2-S1 – Set weekly business hours
 - ⏳ E2.2-S2 – Mark specific days or dates as closed (holidays)
 - ⏳ E2.3-S1 – Add staff members and custom schedules

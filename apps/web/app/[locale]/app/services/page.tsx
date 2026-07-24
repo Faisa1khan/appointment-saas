@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server"
 import { db } from "@/lib/db"
-import { services, serviceCategories } from "@/lib/db/schema"
+import { services, serviceCategories, organizations } from "@/lib/db/schema"
 import { ensureAppUser } from "@/lib/auth/ensure-app-user"
 import { createClient } from "@/lib/supabase/server"
 import { eq, desc, asc } from "drizzle-orm"
@@ -24,6 +24,12 @@ export default async function ServicesPage() {
 
   if (!member) return null
 
+  const organization = await db.query.organizations.findFirst({
+    where: eq(organizations.id, member.organizationId),
+  })
+  
+  if (!organization) return null
+
   // Fetch categories and services
   const categoriesData = await db.select().from(serviceCategories)
     .where(eq(serviceCategories.organizationId, member.organizationId))
@@ -35,7 +41,7 @@ export default async function ServicesPage() {
 
   return (
     <div className="container p-4 mx-auto max-w-5xl md:p-8">
-      <ServicesView services={servicesData} categories={categoriesData} />
+      <ServicesView services={servicesData} categories={categoriesData} currency={organization.currencyCode} />
     </div>
   )
 }

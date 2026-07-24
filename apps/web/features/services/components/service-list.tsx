@@ -3,10 +3,11 @@
 import { useTranslations } from "next-intl"
 import { ServiceRow } from "./service-row"
 
-import { type Service } from "../types"
+import { type Service } from "../repository"
 
 interface ServiceListProps {
   services: Service[]
+  currency: string
   onEdit: (service: Service) => void
   onArchive: (id: string) => void
   onRestore: (id: string) => void
@@ -16,6 +17,7 @@ interface ServiceListProps {
 
 export function ServiceList({
   services,
+  currency,
   onEdit,
   onArchive,
   onRestore,
@@ -38,6 +40,7 @@ export function ServiceList({
         <ServiceRow
           key={service.id}
           service={service}
+          currency={currency}
           onEdit={onEdit}
           onArchive={onArchive}
           onRestore={onRestore}

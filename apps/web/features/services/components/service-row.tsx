@@ -11,10 +11,11 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 
-import { type Service } from "../types"
+import { type Service } from "../repository"
 
 interface ServiceRowProps {
   service: Service
+  currency: string
   onEdit: (service: Service) => void
   onArchive: (id: string) => void
   onRestore: (id: string) => void
@@ -26,6 +27,7 @@ interface ServiceRowProps {
 
 export function ServiceRow({
   service,
+  currency,
   onEdit,
   onArchive,
   onRestore,
@@ -58,7 +60,7 @@ export function ServiceRow({
           <span>
             {new Intl.NumberFormat('en-US', {
               style: 'currency',
-              currency: service.currency || 'USD'
+              currency: currency || 'USD'
             }).format((service.price || 0) / 100)}
           </span>
         </div>

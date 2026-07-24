@@ -1,15 +1,17 @@
 export type Service = {
   id: string
   organizationId: string
+  categoryId?: string | null
   name: string
+  slug: string
   description?: string | null
   durationMinutes: number
   price: number
-  currency: string
   color?: string | null
-  categoryId?: string | null
-  isActive: boolean
   displayOrder: number
+  isActive: boolean
+  bufferBeforeMinutes: number
+  bufferAfterMinutes: number
   createdAt: Date
   updatedAt: Date
 }

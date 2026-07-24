@@ -193,10 +193,10 @@ export const services = pgTable(
       onDelete: 'set null',
     }),
     name: text('name').notNull(),
+    slug: text('slug').notNull(),
     description: text('description'),
     durationMinutes: integer('duration').notNull(), // Minutes
     price: integer('price').notNull().default(0), // Minor units (e.g., cents)
-    currency: text('currency').notNull().default('USD'),
     color: text('color'), // Uses predefined palette e.g., 'blue', 'green'
     displayOrder: integer('display_order').notNull().default(0),
     isActive: boolean('is_active').notNull().default(true), // Archive strategy
@@ -212,6 +212,8 @@ export const services = pgTable(
   (table) => [
     index('services_org_active_idx').on(table.organizationId, table.isActive),
     index('services_category_idx').on(table.categoryId),
+    uniqueIndex('services_org_name_idx').on(table.organizationId, table.name),
+    uniqueIndex('services_org_slug_idx').on(table.organizationId, table.slug),
   ]
 )
 

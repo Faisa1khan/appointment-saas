@@ -1448,3 +1448,91 @@ Introduce a simple, configuration-driven feature capability system to decouple U
 - **Feature Inventory**: The capability configuration also doubles as a product roadmap. By including a `status` in the definition (`complete`, `planned`, `in-progress`), the configuration becomes a single source of truth. It makes it immediately obvious to developers which features are implemented, intentionally hidden, or slated for future releases.
 
 > **Note on Future Evolution**: This implementation intentionally avoids a global `CapabilityProvider`. If capability checks become common across navigation, pages, buttons, or APIs, we may introduce a shared capability service or provider in the future.
+
+---
+
+# Story: E2.1-S1 - Service Management (CRUD operations and ordering)
+
+## Date
+
+2026-07-24
+
+## Objective
+
+Build the foundational feature for managing bookable services, focusing strictly on backend independence, mobile-first design, and rigorous separation of concerns between business logic, data access, and presentation.
+
+---
+
+## What We Built
+
+We implemented a robust service management module, which includes:
+- **Repository Layer (`features/services/repository.ts`)**: Isolated all Drizzle queries for creating, updating, soft-deactivating, and reordering services.
+- **Service Layer (`features/services/services/service-management.service.ts`)**: Encapsulated business rules, ensuring slug and name uniqueness at the organization level before talking to the database.
+- **Server Actions (`features/services/actions.ts`)**: A thin transport layer that authenticates users, validates input via Zod, and delegates execution to the business service layer.
+- **UI Components**: Built `ServiceForm`, `ServiceList`, and `ServiceRow` components adopting a mobile-first philosophy (using Up/Down buttons for ordering instead of complex drag-and-drop on mobile).
+- **Service Deletion Policy (ADR-013)**: Established a soft-deactivate-only policy (`is_active` boolean flag) to prevent historical data loss and broken foreign keys.
+
+---
+
+## Why We Built It This Way
+
+**Backend Independence:** Following our architectural guidelines, we decoupled the business logic from Next.js Server Actions and Supabase/Drizzle queries. If we ever migrate away from Supabase or Next.js, only the repository layer or transport layer needs to change; the core business logic in `service-management.service.ts` remains intact.
+
+**Organization-Scoped Data:** We consciously removed the `currency` column from the `services` table. Currency is an organization-level setting (ADR-012), meaning prices are stored in minor units and formatted according to the organization's regional settings to avoid duplicate sources of truth.
+
+**Mobile-First Design (Strict 390px):** Drag-and-drop interactions are notoriously difficult to implement well for touch devices without large libraries. We chose to use explicit "Up" and "Down" buttons to ensure bulletproof mobile accessibility while adhering to the rule of not introducing new dependencies unnecessarily.
+
+---
+
+## Concepts to Master
+
+- **Repository Pattern:** Abstracting database interactions behind a distinct layer.
+- **Service Pattern (Business Logic):** A dedicated layer for orchestrating business rules (like uniqueness checks) separately from the database or the web framework.
+- **Soft Deletion:** Using an `isActive` flag rather than `DELETE` to preserve historical relationships (e.g. past bookings that referenced a service).
+- **Minor Units for Currency:** Storing money as integers (e.g., cents) to avoid floating-point arithmetic errors.
+
+---
+
+## Vocabulary
+
+- **Repository:** A layer of code that mediates between the domain and data mapping layers, acting like an in-memory domain object collection.
+- **Slug:** A URL-friendly string (e.g., `haircut`) used to identify a resource.
+- **Soft Deactivate:** Marking a record as inactive rather than physically deleting it from the database.
+- **Minor Units:** The smallest denomination of a currency (e.g., cents for USD, paise for INR).
+
+---
+
+## Files to Study
+
+- `apps/web/features/services/repository.ts`
+- `apps/web/features/services/services/service-management.service.ts`
+- `apps/web/features/services/actions.ts`
+- `docs/adr/013-service-deletion-policy.md`
+
+---
+
+## Technologies Introduced
+
+- Re-enforced existing stack (Zod, Next.js Server Actions, Drizzle ORM).
+
+---
+
+## Best Practices
+
+- **Never Delete Domain Entities:** Use `isActive` flags for anything that might be referenced by historical or audit data (like bookings).
+- **Single Source of Truth:** Do not duplicate organization-level settings (like currency or timezone) on child entities.
+- **Thin Controllers (Server Actions):** Server actions should only handle HTTP concerns (Auth, Validation) and delegate the rest.
+
+---
+
+## Common Mistakes
+
+- Placing complex database uniqueness checks directly inside Server Actions or React components.
+- Relying on floating-point numbers for prices. Always use integers (minor units).
+- Implementing desktop-first features (like complex drag-and-drop) without ensuring 390px mobile viewports function perfectly first.
+
+---
+
+## Where This Will Be Used
+
+- This module forms the foundation of the core booking domain. These services will be presented on the public-facing booking page for customers to select.

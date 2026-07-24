@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
+import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { EmptyState } from "./empty-state"
 import { ServiceList } from "./service-list"
@@ -8,18 +9,21 @@ import { ServiceForm } from "./service-form"
 import { Button } from "@/components/ui/button"
 import { PlusCircle } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { archiveService, reorderServices } from "../actions/service.actions"
+import { toggleServiceStatusAction, reorderServicesAction } from "../actions"
 import { toast } from "sonner"
 
-import { type Service, type Category } from "../types"
+import { type Service } from "../repository"
+import { type Category } from "../types"
 
 interface ServicesViewProps {
   services: Service[]
   categories: Category[]
+  currency: string
 }
 
-export function ServicesView({ services: initialServices, categories }: ServicesViewProps) {
+export function ServicesView({ services: initialServices, categories, currency }: ServicesViewProps) {
   const t = useTranslations("services")
+  const router = useRouter()
   const [isPending, startTransition] = useTransition()
   
   // We use optimistic state for the list to make reordering and archiving feel instant
@@ -32,7 +36,7 @@ export function ServicesView({ services: initialServices, categories }: Services
     const previous = [...services]
     setServices(services.map(s => s.id === id ? { ...s, isActive: false } : s))
     
-    const result = await archiveService(id, true)
+    const result = await toggleServiceStatusAction(id, false)
     if (!result.success) {
       setServices(previous)
       toast.error(t("messages.error"))
@@ -45,7 +49,7 @@ export function ServicesView({ services: initialServices, categories }: Services
     const previous = [...services]
     setServices(services.map(s => s.id === id ? { ...s, isActive: true } : s))
     
-    const result = await archiveService(id, false)
+    const result = await toggleServiceStatusAction(id, true)
     if (!result.success) {
       setServices(previous)
       toast.error(t("messages.error"))
@@ -77,7 +81,7 @@ export function ServicesView({ services: initialServices, categories }: Services
       return updated ? updated : s
     }))
 
-    const result = await reorderServices(updatedItems.map(item => ({ id: item.id, displayOrder: item.displayOrder })))
+    const result = await reorderServicesAction(updatedItems.map(item => item.id))
     if (!result.success) {
       setServices(previous)
       toast.error(t("messages.error"))
@@ -98,9 +102,9 @@ export function ServicesView({ services: initialServices, categories }: Services
   }
 
   // Handle successful form submission by refreshing the data (simple MVP approach)
-  // In a real app with React 19 we might use useOptimistic or router.refresh()
+  // In a real app with React 19 we might use useOptimistic
   const handleFormSuccess = () => {
-    window.location.reload()
+    router.refresh()
   }
 
   return (
@@ -132,6 +136,7 @@ export function ServicesView({ services: initialServices, categories }: Services
           <TabsContent value="active" className="mt-0">
             <ServiceList 
               services={activeServices} 
+              currency={currency}
               onEdit={handleEdit}
               onArchive={handleArchive}
               onRestore={handleRestore}
@@ -143,6 +148,7 @@ export function ServicesView({ services: initialServices, categories }: Services
           <TabsContent value="archived" className="mt-0">
             <ServiceList 
               services={archivedServices} 
+              currency={currency}
               onEdit={handleEdit}
               onArchive={handleArchive}
               onRestore={handleRestore}

@@ -3,24 +3,28 @@
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslations } from "next-intl"
-import { serviceSchema } from "../schemas/service.schema"
-import { z } from "zod"
+import { ServiceSchema, type ServiceFormData } from "../validations"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { useState, useTransition } from "react"
-import { createService, updateService } from "../actions/service.actions"
+import { useTransition } from "react"
+import { createServiceAction, updateServiceAction } from "../actions"
 import { toast } from "sonner"
+import { type Service } from "../repository"
 
-import { type Service, type Category } from "../types"
+interface Category {
+  id: string
+  name: string
+}
 
 interface ServiceFormProps {
   service?: Service | null
@@ -35,20 +39,22 @@ export function ServiceForm({ service, categories, open, onOpenChange, onSuccess
   const [isPending, startTransition] = useTransition()
 
   const form = useForm({
-    resolver: zodResolver(serviceSchema),
+    resolver: zodResolver(ServiceSchema),
     defaultValues: {
       name: service?.name || "",
+      slug: service?.slug || "",
       description: service?.description || "",
       durationMinutes: service?.durationMinutes || 30,
       price: service ? service.price / 100 : 0, // Convert minor units to display
-      currency: service?.currency || "USD",
-      color: (service?.color as "blue" | "green" | "orange" | "purple" | "pink" | "red" | "yellow" | "gray") || "blue",
+      color: (service?.color as ServiceFormData['color']) || "blue",
       categoryId: service?.categoryId || null,
       isActive: service?.isActive ?? true,
+      bufferBeforeMinutes: service?.bufferBeforeMinutes || 0,
+      bufferAfterMinutes: service?.bufferAfterMinutes || 0,
     },
   })
 
-  function onSubmit(data: z.infer<typeof serviceSchema>) {
+  function onSubmit(data: ServiceFormData) {
     startTransition(async () => {
       // Convert display price back to minor units
       const submissionData = {
@@ -57,40 +63,59 @@ export function ServiceForm({ service, categories, open, onOpenChange, onSuccess
       }
 
       if (service) {
-        const result = await updateService(service.id, submissionData)
+        const result = await updateServiceAction(service.id, submissionData)
         if (result.success) {
           toast.success(t("messages.updated"))
           onSuccess()
           onOpenChange(false)
         } else {
-          toast.error(t("messages.error"))
+          toast.error(result.error || t("messages.error"))
         }
       } else {
-        const result = await createService(submissionData)
+        const result = await createServiceAction(submissionData)
         if (result.success) {
           toast.success(t("messages.created"))
           onSuccess()
           onOpenChange(false)
           form.reset()
         } else {
-          toast.error(t("messages.error"))
+          toast.error(result.error || t("messages.error"))
         }
       }
     })
   }
 
+  // Auto-generate slug from name if user hasn't typed in slug manually
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.value
+    form.setValue("name", name)
+    // Only auto-generate if we are creating a new service
+    if (!service) {
+      const generatedSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+      form.setValue("slug", generatedSlug, { shouldValidate: true })
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{service ? t("form.editTitle") : t("form.createTitle")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">{t("form.name")}</Label>
-            <Input id="name" placeholder={t("form.namePlaceholder")} {...form.register("name")} />
+            <Input id="name" placeholder={t("form.namePlaceholder")} {...form.register("name")} onChange={handleNameChange} />
             {form.formState.errors.name && (
               <p className="text-sm text-destructive">{form.formState.errors.name.message as string}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="slug">URL Slug</Label>
+            <Input id="slug" placeholder="e.g. haircut" {...form.register("slug")} />
+            {form.formState.errors.slug && (
+              <p className="text-sm text-destructive">{form.formState.errors.slug.message as string}</p>
             )}
           </div>
           
@@ -108,10 +133,11 @@ export function ServiceForm({ service, categories, open, onOpenChange, onSuccess
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="durationMinutes">{t("form.duration")}</Label>
+              <Label htmlFor="durationMinutes">{t("form.duration")} (min)</Label>
               <Input 
                 id="durationMinutes"
                 type="number" 
+                step="5"
                 {...form.register("durationMinutes", { valueAsNumber: true })}
               />
               {form.formState.errors.durationMinutes && (
@@ -129,6 +155,34 @@ export function ServiceForm({ service, categories, open, onOpenChange, onSuccess
               />
               {form.formState.errors.price && (
                 <p className="text-sm text-destructive">{form.formState.errors.price.message as string}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="bufferBeforeMinutes">Buffer Before (min)</Label>
+              <Input 
+                id="bufferBeforeMinutes"
+                type="number" 
+                step="5"
+                {...form.register("bufferBeforeMinutes", { valueAsNumber: true })}
+              />
+              {form.formState.errors.bufferBeforeMinutes && (
+                <p className="text-sm text-destructive">{form.formState.errors.bufferBeforeMinutes.message as string}</p>
+              )}
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="bufferAfterMinutes">Buffer After (min)</Label>
+              <Input 
+                id="bufferAfterMinutes"
+                type="number" 
+                step="5"
+                {...form.register("bufferAfterMinutes", { valueAsNumber: true })}
+              />
+              {form.formState.errors.bufferAfterMinutes && (
+                <p className="text-sm text-destructive">{form.formState.errors.bufferAfterMinutes.message as string}</p>
               )}
             </div>
           </div>
@@ -159,6 +213,45 @@ export function ServiceForm({ service, categories, open, onOpenChange, onSuccess
             {form.formState.errors.color && (
               <p className="text-sm text-destructive">{form.formState.errors.color.message as string}</p>
             )}
+          </div>
+
+          {categories.length > 0 && (
+            <div className="space-y-2">
+              <Label htmlFor="categoryId">Category</Label>
+              <Controller
+                control={form.control}
+                name="categoryId"
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} defaultValue={field.value || undefined}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map(cat => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+          )}
+
+          <div className="flex items-center space-x-2 pt-2">
+            <Controller
+              control={form.control}
+              name="isActive"
+              render={({ field }) => (
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  id="is-active"
+                />
+              )}
+            />
+            <Label htmlFor="is-active">Active (Bookable by customers)</Label>
           </div>
 
           <div className="flex justify-end gap-2 pt-4">
