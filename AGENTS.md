@@ -264,10 +264,9 @@ A story is NOT considered complete until:
 - [ ] `docs/PROGRESS.md` has been updated following the Progress Rules.
 
 ### Database Security
-- [ ] RLS enabled
-- [ ] SELECT policy implemented
-- [ ] INSERT policy implemented (or intentionally omitted)
-- [ ] UPDATE policy implemented
-- [ ] DELETE policy implemented (or intentionally omitted)
+- [ ] Migration generated or registered with Drizzle
+- [ ] Migration applied successfully
+- [ ] Schema verified
+- [ ] RLS verified (when applicable)
 - [ ] Security Advisor reviewed
 - [ ] No new critical security warnings
