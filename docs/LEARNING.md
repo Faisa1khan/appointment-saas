@@ -1411,3 +1411,40 @@ Establish strict standards for handling currency, locale, timezone, and week sta
 - Money must ALWAYS be stored as an integer (smallest unit) in the database and backend.
 - Formatting is exclusively a UI concern.
 - The `week_starts_on` field is essential for preventing hardcoded calendar logic.
+
+---
+
+# Story: Configuration-Driven Feature Capability System
+
+## Date
+
+2026-07-24
+
+## Objective
+Introduce a simple, configuration-driven feature capability system to decouple UI feature availability from hardcoded logic. This is initially applied to hide unfinished features in the User Account Dropdown Menu without hardcoding their omission.
+
+## What We Built
+
+- A capability registry in `apps/web/lib/capabilities.ts` containing a dictionary of UI capabilities (`user:profile`, `organization:settings`, etc.) mapped to boolean evaluators.
+- A refactored `UserNav` component that builds its menu groups dynamically based on a configuration array.
+- Kept i18n completely independent from capability logic by calling `useTranslations` directly inside the components rather than the capability registry.
+
+## Why We Built It This Way
+
+**Decoupling**: Separating what features exist from how the UI renders them allows us to easily hide/show features globally without digging into component logic.
+**Scalability Without Over-Engineering**: We avoided creating a global React Context provider because it wasn't strictly necessary for this scope, following the principle of not solving a problem we don't have yet.
+**Future Proofing**: The system can easily be extended to evaluate capabilities based on user roles, feature flags, or subscription tiers later.
+
+## Concepts to Master
+
+- **Configuration-Driven UI**: Using data structures to drive what the UI renders rather than hardcoded elements.
+- **Progressive Disclosure**: Hiding features that are incomplete to ensure the MVP feels polished.
+
+## Key Takeaways
+
+- Capability systems should only determine *if* something is visible, not *what* the text says (i18n separation).
+- Avoid global contexts until a state is genuinely needed across many disparate parts of the application.
+- **Not an authorization system**: This implementation provides a clean, configuration-driven foundation for controlling feature visibility. If future requirements introduce feature flags, subscription plans, role-based capabilities, or enterprise-specific functionality, this pattern can be extended without requiring a significant refactor. However, backend authorization and database policies (RLS, role checks, etc.) should continue to enforce access control independently.
+- **Feature Inventory**: The capability configuration also doubles as a product roadmap. By including a `status` in the definition (`complete`, `planned`, `in-progress`), the configuration becomes a single source of truth. It makes it immediately obvious to developers which features are implemented, intentionally hidden, or slated for future releases.
+
+> **Note on Future Evolution**: This implementation intentionally avoids a global `CapabilityProvider`. If capability checks become common across navigation, pages, buttons, or APIs, we may introduce a shared capability service or provider in the future.

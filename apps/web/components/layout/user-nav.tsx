@@ -10,12 +10,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { LogOut, Settings, User } from "lucide-react"
+import { LogOut } from "lucide-react"
 import { logout } from "@/app/actions/auth"
 import { useRouter } from "next/navigation"
 
 import { useTranslations } from "next-intl"
+import { hasCapability } from "@/lib/capabilities"
+import React from "react"
+import { USER_MENU_GROUPS } from "./user-menu-config"
 
 export function UserNav({
   name,
@@ -40,6 +42,10 @@ export function UserNav({
     .substring(0, 2)
     .toUpperCase()
 
+  const visibleGroups = USER_MENU_GROUPS
+    .map(group => group.filter(item => hasCapability(item.capability)))
+    .filter(group => group.length > 0);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="relative h-8 w-8 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
@@ -58,23 +64,20 @@ export function UserNav({
             </div>
           </DropdownMenuLabel>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <span>{t('myProfile')}</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <span>{t('organizationSettings')}</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <span>{t('keyboardShortcuts')}</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <span>{t('helpAndDocumentation')}</span>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <span>{t('switchOrganization')}</span>
-        </DropdownMenuItem>
+        
+        {visibleGroups.map((group, groupIndex) => (
+          <React.Fragment key={`group-${groupIndex}`}>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              {group.map(item => (
+                <DropdownMenuItem key={item.id}>
+                  <span>{t(item.translationKey)}</span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuGroup>
+          </React.Fragment>
+        ))}
+
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:bg-destructive/10 focus:text-destructive dark:focus:bg-destructive/20 dark:focus:text-destructive cursor-pointer">
           <LogOut className="mr-2 h-4 w-4" />

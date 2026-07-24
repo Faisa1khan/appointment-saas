@@ -53,6 +53,7 @@ Update this document whenever a story is completed.
 - ✅ E1-S4 – As an owner, I can log in and log out
 - ✅ Platform Compliance Audit – Resolved all remaining hardcoded UI text, theming issues, and applied strict Definition of Done
 - ✅ Regionalization & Localization Standards – Established ADR-012, organization-level currency, locale, timezone, and week start day settings.
+- ✅ Feature Capability System – Implemented a configuration-driven UI system for feature availability mapping.
 
 ---
 
