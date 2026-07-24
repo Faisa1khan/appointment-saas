@@ -431,6 +431,128 @@ For every completed story:
 
 ---
 
+# Future Architecture Guidelines
+
+As we continue building Arrivo, please keep future multi-platform support in mind.
+
+We are **not building a React Native app now**, so do not introduce unnecessary abstractions or refactor existing code.
+
+However, when implementing new features, follow these principles:
+
+### Business Logic
+
+* Keep business logic separate from UI components.
+* Do not place domain rules inside React components.
+* UI should collect input, display data, and call business logic.
+
+### Framework Independence
+
+Avoid coupling business logic to Next.js-specific features whenever practical.
+
+If using Server Actions, treat them as a transport layer that delegates to reusable business logic.
+
+### Browser APIs
+
+Avoid placing browser-specific APIs (`window`, `document`, `localStorage`, etc.) inside reusable modules.
+
+Keep shared logic platform-independent whenever possible.
+
+### Reusable Code
+
+When creating new utilities, consider whether they could be reused by another client in the future.
+
+Examples include:
+
+* Validation
+* Formatting
+* Capability checks
+* Business services
+* Utility functions
+* Constants
+
+### Avoid Premature Abstraction
+
+Do **not** introduce APIs, providers, services, or shared packages unless there is a real need today.
+
+Prefer the simplest implementation that follows good separation of concerns.
+
+### Goal
+
+The objective is **not** to optimize for React Native today.
+
+The objective is to avoid decisions that would make supporting another client difficult in the future.
+
+Whenever implementing a feature, ask:
+
+> "Can the business logic remain independent of the UI?"
+
+If yes, prefer that approach.
+
+---
+
+# Backend Independence Guidelines
+
+We expect Arrivo to evolve over time. While we currently use Supabase for authentication, database, storage, and server-side logic, we may eventually migrate to a dedicated backend (e.g., NestJS, Go, Java, or another service).
+
+Please follow these architectural principles for all new features:
+
+1. **Separate concerns**
+   * UI components should only handle presentation and user interaction.
+   * Business logic should live in reusable services.
+   * Data access should be isolated from business logic whenever practical.
+
+2. **Treat Supabase as infrastructure**
+   * Avoid scattering Supabase queries throughout the codebase.
+   * Keep Supabase-specific code contained in a data access layer or repository close to the feature.
+   * Business services should not depend directly on Supabase APIs when it can be reasonably avoided.
+
+3. **Avoid vendor lock-in**
+   * Design new features so that replacing Supabase with another backend would primarily require changes to the data access layer rather than the UI or business logic.
+
+4. **Avoid over-engineering**
+   * Do not introduce generic repository interfaces, dependency injection, or unnecessary abstractions.
+   * Prefer simple, maintainable code that can evolve incrementally.
+
+5. **Preserve current functionality**
+   * Do not refactor existing code unless there is a clear architectural benefit.
+   * Apply these principles primarily to new features and when modifying existing ones.
+
+Before implementing a feature, ask:
+
+> "If we replaced Supabase in two years, how much of this code would need to change?"
+
+Aim for an architecture where the answer is: **mostly the data access layer, not the business logic or UI.**
+
+---
+
+# Evolutionary Architecture Guidelines
+
+As the project grows, focus on evolutionary improvements rather than revolutionary rewrites. Keep these principles in mind:
+
+1. **Business Logic Separation (Highest Priority)**
+   * Avoid putting business rules in React components, Server Actions, or Supabase queries.
+   * Keep a service layer that orchestrates the logic.
+2. **Data Access**
+   * Keep Supabase access localized by feature (e.g., `features/bookings/repository.ts`).
+3. **Domain Models**
+   * Avoid letting database rows dictate your domain model. `Booking`, `Customer`, and `Service` should represent business entities, regardless of how they are stored.
+4. **External Integrations**
+   * Treat integrations (Email, SMS, Payments, AI) as replaceable. Create small adapters so the application isn't tied to a specific vendor.
+5. **Background Jobs & Events**
+   * Do not implement reminders, analytics, or recurring tasks as long-running requests.
+   * Initially, use simple function calls for event-driven flows (e.g., `Booking Created -> Send email`), making it easy to migrate to queues/messaging later.
+
+### What NOT to Introduce
+Do **not** introduce complexity before you've proven the need. Specifically, avoid:
+* ❌ Repository interfaces everywhere
+* ❌ Dependency Injection frameworks
+* ❌ Hexagonal/Clean Architecture everywhere
+* ❌ CQRS or Event Sourcing
+* ❌ Microservices
+* ❌ Generic abstractions "just in case"
+
+---
+
 # Goal
 
 Every story should be:
