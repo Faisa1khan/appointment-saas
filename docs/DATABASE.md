@@ -77,6 +77,9 @@ A business registered on the platform.
 | `email` | `text` | | Business contact email |
 | `address` | `text` | | Physical address |
 | `timezone` | `text` | NOT NULL, DEFAULT `'UTC'` | IANA timezone string (e.g. `Asia/Karachi`) |
+| `currency_code` | `text` | NOT NULL, DEFAULT `'USD'` | ISO 4217 currency code (e.g. `USD`, `INR`, `EUR`) |
+| `locale` | `text` | NOT NULL, DEFAULT `'en-US'` | Locale for formatting (e.g. `en-US`, `en-IN`, `de-DE`) |
+| `week_starts_on` | `smallint` | NOT NULL, DEFAULT `1` | 0 = Sunday, 1 = Monday, etc. |
 | `booking_interval` | `integer` | NOT NULL, DEFAULT `30` | Slot generation interval in minutes (e.g. 15, 30, 60) |
 | `min_advance_minutes` | `integer` | NOT NULL, DEFAULT `0` | Minimum minutes in advance a booking must be made. `0` = no restriction. e.g. `60` = must book at least 1 hour ahead |
 | `cancellation_cutoff_hours` | `integer` | NOT NULL, DEFAULT `0` | Hours before booking start within which a customer can no longer self-cancel. `0` = no restriction. Owner/staff can always cancel. |

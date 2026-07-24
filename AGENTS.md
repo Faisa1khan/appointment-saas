@@ -240,6 +240,25 @@ Never optimize prematurely.
 
 ---
 
+# Localization
+
+The platform is designed for global use.
+
+Never assume:
+
+- Currency
+- Timezone
+- Date format
+- Time format
+- Language
+- Locale
+
+Business-specific regional settings must be configurable and stored at the organization level.
+
+Prices should always be stored in the smallest currency unit (for example, cents or paise) and formatted according to the organization's configured currency and locale.
+
+---
+
 # Implementation Workflow
 
 Before implementing any story:

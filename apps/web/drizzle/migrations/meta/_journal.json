@@ -29,6 +29,20 @@
       "when": 1784874462050,
       "tag": "0003_multi_tenant_security",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1784885986159,
+      "tag": "0004_old_tiger_shark",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1784886227506,
+      "tag": "0005_big_firedrake",
+      "breakpoints": true
     }
   ]
 }

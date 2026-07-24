@@ -5,6 +5,7 @@ import {
   uuid,
   text,
   integer,
+  smallint,
   boolean,
   timestamp,
   time,
@@ -82,6 +83,9 @@ export const organizations = pgTable(
     email: text('email'),
     address: text('address'),
     timezone: text('timezone').notNull().default('UTC'),
+    currencyCode: text('currency_code').notNull().default('USD'),
+    locale: text('locale').notNull().default('en-US'),
+    weekStartsOn: smallint('week_starts_on').notNull().default(1),
     bookingInterval: integer('booking_interval').notNull().default(30),
     minAdvanceMinutes: integer('min_advance_minutes').notNull().default(0),
     cancellationCutoffHours: integer('cancellation_cutoff_hours')

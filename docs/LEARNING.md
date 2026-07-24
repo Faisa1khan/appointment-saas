@@ -1374,3 +1374,40 @@ Refactor the platform's UI to adhere to strict mobile-first engineering principl
 - Every single feature must be built and tested for a 390px screen first. Desktop is an enhancement, not the primary target.
 - Avoid hover-dependent actions.
 - Use native mobile UX patterns like bottom sheets, full-screen dialogs, and drawers over standard web modals.
+
+---
+
+# Story: Regionalization & Localization Standards
+
+## Date
+
+2026-07-24
+
+## Objective
+
+Establish strict standards for handling currency, locale, timezone, and week start days on a per-tenant basis in our multi-tenant SaaS. Prevent architectural tech debt by ensuring these settings are configured at the organization level from day one.
+
+## What We Built
+
+- Added `currency_code`, `locale`, and `week_starts_on` to the `organizations` database table.
+- Documented these requirements explicitly in `AGENTS.md` and `DATABASE.md`.
+- Wrote ADR-012 to codify formatting responsibilities (storing integer money values and formatting them strictly on the UI).
+
+## Why We Built It This Way
+
+**Per-Tenant Localization**: Different organizations operate in completely different regions. A generic multi-tenant SaaS cannot assume a single currency or timezone globally.
+**Standardization**: Relying on strict ISO (4217), IANA, and BCP 47 standards makes integrating with modern browser APIs (like `Intl.NumberFormat`) significantly easier.
+**Integer Money Storage**: Floating-point precision errors (e.g., `$19.99 * 100 = 1998.999999`) cause catastrophic issues in financial systems. Storing the smallest unit (cents) as integers completely prevents this.
+
+## Concepts to Master
+
+- **ISO 4217**: The standard for currency codes (e.g. USD, EUR, INR).
+- **IANA Timezones**: The standard for timezone strings (e.g. `Asia/Kolkata`).
+- **BCP 47**: The standard for language and locale tags (e.g. `en-US`).
+- **`Intl` API**: The browser-native API for internationalization.
+
+## Key Takeaways
+
+- Money must ALWAYS be stored as an integer (smallest unit) in the database and backend.
+- Formatting is exclusively a UI concern.
+- The `week_starts_on` field is essential for preventing hardcoded calendar logic.
