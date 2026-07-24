@@ -6,6 +6,42 @@ Every AI agent working on this project MUST follow these rules.
 
 ---
 
+# Rule Priority
+
+If two rules appear to conflict, follow this order:
+
+1. Security
+2. Documentation
+3. Architecture
+4. Business Requirements
+5. Engineering Principles
+6. Coding Standards
+7. UI Guidelines
+8. Personal Preference
+
+If the conflict cannot be resolved using this order:
+
+STOP
+
+Explain the conflict and ask for clarification.
+
+---
+
+# AI Agent Behavior
+
+The agent MUST:
+
+- Think before implementing.
+- Prefer existing project patterns over creating new ones.
+- Reuse existing components whenever possible.
+- Explain architectural decisions before making them.
+- Identify risks before implementation.
+- Never silently change conventions.
+- Ask for approval before making architectural or UX changes.
+- Keep solutions as simple as possible for the current story.
+
+---
+
 # Project
 
 Generic Multi-Tenant Appointment Booking SaaS
@@ -19,6 +55,8 @@ The fundamental engineering principles for this project are defined in `docs/ENG
 The project's technology stack is defined in `docs/STACK.md`.
 
 Do not introduce new libraries, frameworks, or architectural patterns without approval.
+
+Always prefer existing project utilities, components, hooks, and abstractions before creating new ones.
 
 ---
 
@@ -40,7 +78,71 @@ Do not introduce new libraries, frameworks, or architectural patterns without ap
 - Do not install another UI library.
 - Use Tailwind utilities.
 - Maintain consistent spacing.
-- Mobile-first responsive design.
+- **Arrivo is a mobile-first SaaS. Every feature must be designed, implemented, and tested on a mobile viewport (390px) before being optimized for larger screens. Desktop enhances the experience but is never the primary design target.**
+- Prefer cards over wide tables.
+- Use bottom sheets or full-screen dialogs instead of tiny centered modals on mobile.
+- Keep primary actions easy to reach with one thumb.
+
+---
+
+# Reusable Components
+
+Every reusable UI component MUST:
+
+- Be mobile-first by default.
+- Support responsive layouts without feature-specific modifications.
+- Avoid hardcoded dimensions unless documented.
+- Expose configuration through props rather than duplication.
+- Remain consistent with the project's design system.
+
+---
+
+# Accessibility
+
+Every UI must:
+
+- Use semantic HTML.
+- Include accessible labels.
+- Support keyboard navigation where appropriate.
+- Never rely solely on color to convey meaning.
+- Maintain sufficient color contrast.
+
+---
+
+# Performance
+
+- Prefer Server Components.
+- Avoid unnecessary Client Components.
+- Avoid unnecessary re-renders.
+- Lazy load large client-side features when appropriate.
+- Keep bundle size minimal.
+
+---
+
+## Mobile UX Review (Required)
+
+Before implementing any new feature, the agent MUST consider the mobile experience first.
+
+The implementation order is:
+
+1. Mobile (390–430px)
+2. Tablet (768px)
+3. Desktop (1024px+)
+
+The agent should never implement a desktop layout first and later adapt it for mobile.
+
+### UI Guidelines
+
+- Prefer vertical layouts on mobile.
+- Avoid multi-column forms on screens smaller than `sm`.
+- Avoid hover-only interactions.
+- Prefer cards over tables on mobile.
+- Use drawers or full-screen dialogs on mobile.
+- Primary actions should be visible without horizontal scrolling.
+- Touch targets must be at least 44×44px.
+- Avoid hidden functionality that depends on hover.
+- Navigation should remain fully usable with one hand.
+- Minimize typing whenever possible.
 
 ---
 
@@ -95,6 +197,35 @@ Availability is always computed by the backend.
 
 ---
 
+# Architecture Decisions
+
+The agent MUST NOT introduce architectural changes without first updating or creating the appropriate ADR.
+
+If a story requires changing an existing architectural decision:
+
+1. STOP
+2. Explain the conflict.
+3. Update the ADR.
+4. Wait for approval before implementation.
+
+Implementation must follow approved architecture.
+
+---
+
+# Feature Architecture
+
+Every new feature MUST follow the project's feature structure.
+
+- Business logic belongs inside the feature.
+- UI components belong inside the feature.
+- Validation belongs inside the feature.
+- Server Actions belong inside the feature.
+- Shared code belongs in shared libraries only when reused by multiple features.
+
+Pages should remain thin and primarily compose feature modules.
+
+---
+
 # Design Principles
 
 Keep the MVP simple.
@@ -123,9 +254,30 @@ Before implementing any story:
 
 ---
 
+# Implementation Plan Guidelines
+
+Every `implementation_plan.md` MUST include a **Mobile Review** section before execution:
+
+```md
+## Mobile Review
+
+Before implementation, verify:
+
+- [ ] Works at 390px
+- [ ] No horizontal scrolling
+- [ ] No hover-only interactions
+- [ ] Forms stack correctly
+- [ ] Touch targets >= 44px
+- [ ] Primary CTA reachable
+- [ ] Dialogs usable on mobile
+- [ ] Navigation works on mobile
+```
+
+---
+
 # Scope Control
 
-Implement ONLY the requested story.
+Implement ONLY the requested story unless an unrelated change is required to fix a bug, maintain consistency, or satisfy an existing engineering standard. If such a change is required, explain it before making it.
 
 Do not:
 
@@ -134,6 +286,22 @@ Do not:
 - Add features from future stories.
 - Introduce new libraries.
 - Change architecture without approval.
+
+---
+
+# Technical Debt
+
+Do not leave unfinished work.
+
+Avoid:
+
+- TODO comments
+- Placeholder implementations
+- Mock data
+- Temporary workarounds
+- Dead code
+
+If a story cannot be completed properly, STOP and explain why instead of leaving partial implementations.
 
 ---
 
@@ -219,7 +387,14 @@ Every completed story MUST follow this order:
 7. Perform a self-review.
 8. Summarize the implementation.
 9. Suggest a Conventional Commit message.
-10. Stop and wait for my review.
+10. For UI stories include:
+    - Before screenshots (if modifying an existing feature)
+    - After screenshots
+    - Mobile (390px)
+    - Tablet (768px)
+    - Desktop (1024px+)
+    - Explain any UX decisions that changed user behaviour.
+11. Stop and wait for my review.
 
 Never continue to the next story automatically.
 
@@ -262,6 +437,18 @@ A story is NOT considered complete until:
 - [ ] Relevant documentation has been updated (if required).
 - [ ] `docs/LEARNING.md` has been updated with a new entry following the Learning Workflow.
 - [ ] `docs/PROGRESS.md` has been updated following the Progress Rules.
+
+### Mobile First QA Gate
+- [ ] Designed at 390px first
+- [ ] Tested on 390px viewport
+- [ ] No horizontal scrolling
+- [ ] All interactive controls meet touch target guidelines (at least 44x44px)
+- [ ] Forms are usable with one hand
+- [ ] Drawer closes after navigation
+- [ ] No hover-only interactions
+- [ ] Dialogs appropriate for mobile (fullscreen/drawer when required)
+- [ ] Tablet (768px) layout verified
+- [ ] Desktop (1024px+) layout verified
 
 ### Database Security
 - [ ] Migration generated or registered with Drizzle

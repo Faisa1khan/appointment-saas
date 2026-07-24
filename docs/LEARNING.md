@@ -1302,3 +1302,75 @@ We prioritize a reliable, crash-free development environment over experimental b
 
 ### Key Takeaways
 Always test experimental compiler flags (like Turbopack) against your observability and PWA toolchains. Revisit enabling Turbopack once Sentry and Serwist announce stable support.
+
+---
+
+# Story: Mobile UX Audit & Refactoring
+
+## Date
+
+2026-07-24
+
+## Objective
+
+Refactor the platform's UI to adhere to strict mobile-first engineering principles, ensuring all features are designed, implemented, and tested on a 390px viewport before larger screens.
+
+---
+
+## What We Built
+
+- Formalized mobile-first requirements in `ENGINEERING_PRINCIPLES.md` and `AGENTS.md`.
+- Refactored `register-form.tsx` to stack fields gracefully on small screens using `grid-cols-1 sm:grid-cols-2`.
+- Globally updated `Button` base styles to have a minimum height of `44px` (touch target accessibility).
+- Replaced the generic top navigation with a responsive `Sidebar` using a hamburger drawer on mobile.
+- Refactored `ServiceRow` to replace hover-dependent actions (`group-hover`) with a touch-friendly `DropdownMenu`.
+- Updated `Dialog` configuration to render as full-screen overlays on mobile to avoid cramped centered modals.
+
+---
+
+## Why We Built It This Way
+
+**Mobile-First is Mandatory:** The majority of users (clients booking appointments) and even administrators on the go will use their phones. Designing for desktop first and "making it responsive" leads to cramped, unusable mobile interfaces.
+**Accessible Touch Targets:** Apple's Human Interface Guidelines state interactive elements must be at least 44x44 points. Hover-based actions (`group-hover:opacity-100`) completely break on touch screens because there is no cursor to hover.
+
+---
+
+## Architecture Decisions
+
+- **Decision:** Use a responsive Sidebar + Drawer instead of a Bottom Navigation Bar.
+  - **Reason:** Arrivo is a growing SaaS with many sections (Dashboard, Calendar, Services, Settings, etc.). A bottom bar only scales well for 3-5 static destinations. The Sidebar (drawer on mobile) provides infinitely scalable vertical navigation.
+- **Decision:** Dialogs become full-screen on mobile.
+  - **Reason:** Rendering standard modals on mobile viewports often breaks layout and makes inputs hard to tap. Full-screen modals provide the best UX for forms.
+
+---
+
+## Concepts to Master
+
+### Mobile Touch Accessibility
+- **Hover States vs Touch:** Never hide primary actions behind hover states without a touch alternative.
+- **Touch Targets:** The physical size of a button matters significantly on mobile devices (minimum 44x44px).
+
+---
+
+## Vocabulary
+
+- **Viewport:** The user's visible area of a web page.
+- **Touch Target:** Any area of the screen that responds to user input (taps, swipes).
+- **Drawer / Sheet:** An overlay panel that slides in from the edge of the screen, commonly used for mobile navigation.
+
+---
+
+## Files to Study
+
+- `apps/web/components/ui/button.tsx` (Touch target classes)
+- `apps/web/components/ui/dialog.tsx` (Responsive mobile overlay styling)
+- `apps/web/components/layout/app-sidebar.tsx`
+- `apps/web/features/services/components/service-row.tsx` (DropdownMenu replacing hover actions)
+
+---
+
+## Key Takeaways
+
+- Every single feature must be built and tested for a 390px screen first. Desktop is an enhancement, not the primary target.
+- Avoid hover-dependent actions.
+- Use native mobile UX patterns like bottom sheets, full-screen dialogs, and drawers over standard web modals.

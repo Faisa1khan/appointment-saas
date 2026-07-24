@@ -14,14 +14,16 @@ Arrivo is a modern SaaS appointment scheduling platform. These principles serve 
 
 ## Mobile First
 
-Arrivo is designed mobile-first. Every screen must be designed for:
+Arrivo is a mobile-first SaaS. Every feature must be designed, implemented, and tested on a 390px mobile viewport before being optimized for larger screens. Desktop enhances the experience but is never the primary design target.
 
-- 360px
-- 375px
-- 390px
-- 430px
+- **Primary:** Mobile web (390–430px)
+- **Secondary:** Tablet (768px)
+- **Tertiary:** Desktop (1024px+)
 
-Desktop should enhance the experience rather than define it. Every future page must be responsive by default.
+Development Workflow:
+1. Build and test at 390px (e.g., iPhone 14 Pro, 390 × 844 in Chrome DevTools).
+2. Expand layout for Tablet (768px).
+3. Polish and optimize for Desktop (1024px+). Take advantage of extra space (multi-column layouts, side panels, larger tables) but do not design desktop first.
 
 ---
 
@@ -185,12 +187,11 @@ Mobile:
 ## Responsive Testing Checklist
 
 Require testing in:
-- Portrait
-- Landscape
+- Mobile Portrait (390px)
+- Tablet (768px)
+- Desktop (1024px+)
 - Mobile Safari
 - Chrome Android
-- Tablet
-- Desktop
 
 ---
 
@@ -198,7 +199,10 @@ Require testing in:
 
 A story is complete only if:
 
-- [ ] Mobile responsive
+- [ ] Designed and tested at 390px first
+- [ ] No horizontal scrolling on mobile
+- [ ] Touch targets are at least 44x44px
+- [ ] Forms are usable with one hand
 - [ ] Light theme supported
 - [ ] Dark theme supported
 - [ ] System theme supported

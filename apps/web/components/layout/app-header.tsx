@@ -5,6 +5,7 @@ import { ensureAppUser } from "@/lib/auth/ensure-app-user"
 import { createClient } from "@/lib/supabase/server"
 import { getTranslations } from "next-intl/server"
 import Link from "next/link"
+import { SidebarTrigger } from "@/components/ui/sidebar"
 
 export async function AppHeader() {
   const supabase = await createClient()
@@ -18,16 +19,9 @@ export async function AppHeader() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 h-14 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <div className="font-bold text-xl text-primary">{t('name')}</div>
-          <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
-            <Link href="/app" className="transition-colors hover:text-foreground/80 text-foreground/60">
-              Dashboard
-            </Link>
-            <Link href="/app/services" className="transition-colors hover:text-foreground/80 text-foreground">
-              Services
-            </Link>
-          </nav>
+        <div className="flex items-center gap-4">
+          <SidebarTrigger className="md:hidden" />
+          <div className="font-bold text-xl text-primary md:hidden">{t('name')}</div>
         </div>
         <div className="flex items-center gap-4">
           <LanguageSwitcher />
