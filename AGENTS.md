@@ -262,3 +262,12 @@ A story is NOT considered complete until:
 - [ ] Relevant documentation has been updated (if required).
 - [ ] `docs/LEARNING.md` has been updated with a new entry following the Learning Workflow.
 - [ ] `docs/PROGRESS.md` has been updated following the Progress Rules.
+
+### Database Security
+- [ ] RLS enabled
+- [ ] SELECT policy implemented
+- [ ] INSERT policy implemented (or intentionally omitted)
+- [ ] UPDATE policy implemented
+- [ ] DELETE policy implemented (or intentionally omitted)
+- [ ] Security Advisor reviewed
+- [ ] No new critical security warnings
