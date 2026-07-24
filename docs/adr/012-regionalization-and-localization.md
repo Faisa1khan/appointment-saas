@@ -15,6 +15,19 @@ A generic multi-tenant SaaS must support organizations operating in different co
 * Monetary values are stored in the **smallest currency unit** (cents/paise), **never** as floating-point values or decimals.
 * Business logic never assumes a fixed currency.
 
+## Default Regional Configuration
+
+For the MVP, newly created organizations are initialized with Indian regional settings:
+
+- Currency: INR
+- Locale: en-IN
+- Timezone: Asia/Kolkata
+- Week Starts On: Monday (1)
+
+These are defaults only.
+
+The platform must never assume these values. Each organization can configure its own regional settings independently.
+
 ### Formatting Responsibility
 Formatting is strictly a UI concern. The database and backend should never return preformatted strings.
 
