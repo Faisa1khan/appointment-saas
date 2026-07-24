@@ -40,3 +40,19 @@ export const ServiceSchema = z.object({
 export type ServiceFormData = z.infer<typeof ServiceSchema>
 
 export const UpdateServiceOrderSchema = z.array(z.string().uuid())
+
+export const CategorySchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  slug: z
+    .string()
+    .min(1, 'Slug is required')
+    .regex(/^[a-z0-9-]+$/, 'Slug must be lowercase alphanumeric with hyphens'),
+  color: z
+    .enum(['blue', 'green', 'orange', 'purple', 'pink', 'red', 'yellow', 'gray'])
+    .optional()
+    .or(z.literal('')),
+})
+
+export type CategoryFormData = z.infer<typeof CategorySchema>
+
+export const UpdateCategoryOrderSchema = z.array(z.string().uuid())

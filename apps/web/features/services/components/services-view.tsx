@@ -12,8 +12,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toggleServiceStatusAction, reorderServicesAction } from "../actions"
 import { toast } from "sonner"
 
-import { type Service } from "../repository"
-import { type Category } from "../types"
+import { CategoryList } from "./category-list"
+import { CategoryForm } from "./category-form"
+
+import { type Service, type Category } from "../repository"
 
 interface ServicesViewProps {
   services: Service[]
@@ -25,6 +27,7 @@ export function ServicesView({ services: initialServices, categories, currency }
   const t = useTranslations("services")
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
+  const [activeTab, setActiveTab] = useState("services")
   
   // We use optimistic state for the list to make reordering and archiving feel instant
   const [services, setServices] = useState(initialServices)
@@ -101,6 +104,19 @@ export function ServicesView({ services: initialServices, categories, currency }
     setIsFormOpen(true)
   }
 
+  const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false)
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null)
+
+  const handleEditCategory = (category: Category) => {
+    setEditingCategory(category)
+    setIsCategoryFormOpen(true)
+  }
+
+  const handleCreateCategory = () => {
+    setEditingCategory(null)
+    setIsCategoryFormOpen(true)
+  }
+
   // Handle successful form submission by refreshing the data (simple MVP approach)
   // In a real app with React 19 we might use useOptimistic
   const handleFormSuccess = () => {
@@ -115,55 +131,93 @@ export function ServicesView({ services: initialServices, categories, currency }
           <p className="text-muted-foreground">{t("subtitle")}</p>
         </div>
         <div className="flex items-center gap-2">
-          {services.length > 0 && (
+          {activeTab === "services" && services.length > 0 && (
             <Button onClick={handleCreate}>
               <PlusCircle className="w-4 h-4 mr-2" />
               {t("addService")}
             </Button>
           )}
+          {activeTab === "categories" && categories.length > 0 && (
+            <Button onClick={handleCreateCategory}>
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Add Category
+            </Button>
+          )}
         </div>
       </div>
 
-      {services.length === 0 ? (
-        <EmptyState onAdd={handleCreate} />
-      ) : (
-        <Tabs defaultValue="active" className="w-full">
-          <TabsList className="mb-4">
-            <TabsTrigger value="active">{t("tabs.active")} ({activeServices.length})</TabsTrigger>
-            <TabsTrigger value="archived">{t("tabs.archived")} ({archivedServices.length})</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="active" className="mt-0">
-            <ServiceList 
-              services={activeServices} 
-              currency={currency}
-              onEdit={handleEdit}
-              onArchive={handleArchive}
-              onRestore={handleRestore}
-              onMoveUp={(idx) => handleMove(idx, 'up', false)}
-              onMoveDown={(idx) => handleMove(idx, 'down', false)}
-            />
-          </TabsContent>
-          
-          <TabsContent value="archived" className="mt-0">
-            <ServiceList 
-              services={archivedServices} 
-              currency={currency}
-              onEdit={handleEdit}
-              onArchive={handleArchive}
-              onRestore={handleRestore}
-              onMoveUp={(idx) => handleMove(idx, 'up', true)}
-              onMoveDown={(idx) => handleMove(idx, 'down', true)}
-            />
-          </TabsContent>
-        </Tabs>
-      )}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="mb-6">
+          <TabsTrigger value="services">Services</TabsTrigger>
+          <TabsTrigger value="categories">Categories</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="services" className="mt-0">
+          {services.length === 0 ? (
+            <EmptyState onAdd={handleCreate} />
+          ) : (
+            <Tabs defaultValue="active" className="w-full">
+              <TabsList className="mb-4">
+                <TabsTrigger value="active">{t("tabs.active")} ({activeServices.length})</TabsTrigger>
+                <TabsTrigger value="archived">{t("tabs.archived")} ({archivedServices.length})</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="active" className="mt-0">
+                <ServiceList 
+                  services={activeServices} 
+                  currency={currency}
+                  onEdit={handleEdit}
+                  onArchive={handleArchive}
+                  onRestore={handleRestore}
+                  onMoveUp={(idx) => handleMove(idx, 'up', false)}
+                  onMoveDown={(idx) => handleMove(idx, 'down', false)}
+                />
+              </TabsContent>
+              
+              <TabsContent value="archived" className="mt-0">
+                <ServiceList 
+                  services={archivedServices} 
+                  currency={currency}
+                  onEdit={handleEdit}
+                  onArchive={handleArchive}
+                  onRestore={handleRestore}
+                  onMoveUp={(idx) => handleMove(idx, 'up', true)}
+                  onMoveDown={(idx) => handleMove(idx, 'down', true)}
+                />
+              </TabsContent>
+            </Tabs>
+          )}
+        </TabsContent>
+
+        <TabsContent value="categories" className="mt-0">
+          <CategoryList 
+            categories={categories} 
+            services={services} 
+            onEdit={handleEditCategory} 
+          />
+          {categories.length === 0 && (
+            <div className="mt-4 flex justify-center">
+              <Button onClick={handleCreateCategory}>
+                <PlusCircle className="w-4 h-4 mr-2" />
+                Add Category
+              </Button>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
 
       <ServiceForm 
         open={isFormOpen} 
         onOpenChange={setIsFormOpen} 
         service={editingService} 
         categories={categories}
+        onSuccess={handleFormSuccess}
+      />
+
+      <CategoryForm
+        open={isCategoryFormOpen}
+        onOpenChange={setIsCategoryFormOpen}
+        category={editingCategory}
         onSuccess={handleFormSuccess}
       />
     </div>

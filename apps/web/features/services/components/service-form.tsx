@@ -8,7 +8,14 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { slugify } from "@/lib/slug"
 import { Switch } from "@/components/ui/switch"
 import {
   Dialog,
@@ -59,7 +66,8 @@ export function ServiceForm({ service, categories, open, onOpenChange, onSuccess
       // Convert display price back to minor units
       const submissionData = {
         ...data,
-        price: Math.round(data.price * 100)
+        price: Math.round(data.price * 100),
+        categoryId: data.categoryId === "none" ? null : data.categoryId
       }
 
       if (service) {
@@ -91,7 +99,7 @@ export function ServiceForm({ service, categories, open, onOpenChange, onSuccess
     form.setValue("name", name)
     // Only auto-generate if we are creating a new service
     if (!service) {
-      const generatedSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+      const generatedSlug = slugify(name)
       form.setValue("slug", generatedSlug, { shouldValidate: true })
     }
   }
@@ -222,11 +230,12 @@ export function ServiceForm({ service, categories, open, onOpenChange, onSuccess
                 control={form.control}
                 name="categoryId"
                 render={({ field }) => (
-                  <Select onValueChange={field.onChange} defaultValue={field.value || undefined}>
+                  <Select onValueChange={field.onChange} defaultValue={field.value || "none"}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="none">None</SelectItem>
                       {categories.map(cat => (
                         <SelectItem key={cat.id} value={cat.id}>
                           {cat.name}

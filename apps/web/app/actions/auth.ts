@@ -6,6 +6,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { db } from '@/lib/db'
 import { organizations, organizationMembers } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
+import { slugify } from '@/lib/slug'
 
 const registerSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
@@ -14,15 +15,7 @@ const registerSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
 })
 
-function slugify(text: string) {
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')        // Replace spaces with -
-    .replace(/[^\w\-]+/g, '')    // Remove all non-word chars
-    .replace(/\-\-+/g, '-')      // Replace multiple - with single -
-}
+
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function generateUniqueSlug(tx: any, baseSlug: string) {

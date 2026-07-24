@@ -1536,3 +1536,36 @@ We implemented a robust service management module, which includes:
 ## Where This Will Be Used
 
 - This module forms the foundation of the core booking domain. These services will be presented on the public-facing booking page for customers to select.
+
+## E2.1-S2: Service Categories (Create/Edit/Assign)
+
+**Objective**: Implement a way to logically group services into categories (e.g., "Haircuts", "Coloring") to organize the booking flow.
+
+**What We Built**:
+- `service_categories` table with `slug`, `name`, `color`, and `display_order`.
+- Enforced a hard deletion policy for categories (since `services.category_id` uses `ON DELETE SET NULL`), unlike services which use a soft `is_active` toggle.
+- Added business logic (`category-management.service.ts`) to validate category names and slugs to ensure they are unique within an organization.
+- Built a mobile-first `CategoryList` with reorder capability (Up/Down) and a `CategoryForm`.
+- Added a confirmation dialog when deleting a category that calculates and displays the number of services that will become uncategorized.
+- Added a top-level tab structure in `services-view.tsx` to separate Service management from Category management.
+- Extended the `ServiceForm` dropdown to include a "None" option, resolving back to `null`.
+
+**Why We Built It This Way**:
+- **Hard Deletes for Metadata**: Since categories don't have historical business constraints (a booking snapshot keeps its own historical price/name data), retaining deleted categories is unnecessary and litters the database.
+- **Top-Level Tabs**: Separating Categories from Services at the highest level of the view prevents deep nesting and keeps the primary focus on Services for the MVP.
+- **Server-computed ordering**: The client sends the ordered list of UUIDs and the backend assigns `displayOrder` to prevent client-side spoofing or data corruption.
+- **Empty category protection**: Warning the user if 15 services are about to become uncategorized prevents accidental organizational destruction and improves UX.
+
+**Concepts to Master**:
+- Understanding when to use soft deletes (`is_active`) vs. hard deletes (`ON DELETE SET NULL`/`CASCADE`).
+- Safe database migrations on `NOT NULL` columns (Backfilling existing rows before applying `NOT NULL` constraints).
+- Optimistic UI updates in React with Server Actions.
+
+**Files to Study**:
+- `apps/web/features/services/services/category-management.service.ts`
+- `apps/web/features/services/components/category-list.tsx`
+- `apps/web/features/services/components/services-view.tsx`
+
+**Key Takeaways**:
+- Always enforce uniqueness in BOTH the business logic layer (for UX) and the database level (for data integrity).
+- Always consider the migration path for existing data when modifying database schemas in a production-like environment.

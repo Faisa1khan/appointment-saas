@@ -28,9 +28,9 @@ Update this document whenever a story is completed.
 
 # Current Story
 
-**Story ID:** E2.1-S2
+**Story ID:** E2.2-S1
 
-**Title:** Service Categories (Create/Edit/Assign)
+**Title:** Set weekly business hours
 
 **Status:** 🟡 In Progress
 
@@ -55,12 +55,12 @@ Update this document whenever a story is completed.
 - ✅ Regionalization & Localization Standards – Established ADR-012, organization-level currency, locale, timezone, and week start day settings.
 - ✅ Feature Capability System – Implemented a configuration-driven UI system for feature availability mapping.
 - ✅ E2.1-S1 – Service Management (CRUD operations and ordering)
+- ✅ E2.1-S2 – Service Categories (Create/Edit/Assign)
 
 ---
 
 # Upcoming Stories
 
-- ⏳ E2.2-S1 – Set weekly business hours
 - ⏳ E2.2-S2 – Mark specific days or dates as closed (holidays)
 - ⏳ E2.3-S1 – Add staff members and custom schedules
 - ⏳ E2.4-S1 – Backend generates appointment slots with rules engine

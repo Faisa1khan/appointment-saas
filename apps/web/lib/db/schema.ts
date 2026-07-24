@@ -167,6 +167,7 @@ export const serviceCategories = pgTable(
       .notNull()
       .references(() => organizations.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),
+    slug: text('slug').notNull(),
     color: text('color'), // Uses predefined palette e.g., 'blue', 'green'
     displayOrder: integer('display_order').notNull().default(0),
     createdAt: timestamp('created_at', { withTimezone: true })
@@ -178,6 +179,14 @@ export const serviceCategories = pgTable(
   },
   (table) => [
     index('service_categories_org_idx').on(table.organizationId),
+    uniqueIndex('service_categories_org_name_idx').on(
+      table.organizationId,
+      table.name
+    ),
+    uniqueIndex('service_categories_org_slug_idx').on(
+      table.organizationId,
+      table.slug
+    ),
   ]
 )
 

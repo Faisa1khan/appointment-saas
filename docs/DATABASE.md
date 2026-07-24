@@ -142,6 +142,30 @@ Customers are scoped to an organization. The same person can be a customer at mu
 
 ---
 
+### `service_categories`
+
+A logical grouping of services (e.g. "Haircuts", "Coloring").
+
+| Column | Type | Constraints | Notes |
+|---|---|---|---|
+| `id` | `uuid` | PK, DEFAULT `gen_random_uuid()` | |
+| `organization_id` | `uuid` | NOT NULL, FK → `organizations(id)` ON DELETE CASCADE | |
+| `name` | `text` | NOT NULL | Display name |
+| `slug` | `text` | NOT NULL | URL-safe identifier |
+| `color` | `text` | | Predefined palette color |
+| `display_order` | `integer` | NOT NULL, DEFAULT `0` | Controls ordering in the UI |
+| `created_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | |
+| `updated_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | |
+
+**Indexes:**
+- Index on `organization_id`
+- Unique Index on `(organization_id, name)`
+- Unique Index on `(organization_id, slug)`
+
+**RLS:** Readable publicly. Writable by org members.
+
+---
+
 ### `services`
 
 A bookable service offered by an organization.
@@ -387,6 +411,8 @@ The following entities are intentionally **excluded from the MVP**. Their absenc
 | `notification_logs` | Delivery tracking for messages | V3 |
 | `reviews` | Customer ratings and feedback | V4+ |
 | `loyalty_points` | Customer reward programs | V4+ |
+| `category_icons` | Visual icons for categories | V2+ |
+| `category_hierarchy` | Nested parent/child categories | V3+ |
 | `staff_skills` | Mapping resources to specific services they can perform | V2+ |
 | `resource_service_map` | Which resources can perform which services | V2+ |
 | `takeaway_orders` | Self-ordering / click-and-collect flow | V2 |

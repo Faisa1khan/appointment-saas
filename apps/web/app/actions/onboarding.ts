@@ -97,6 +97,7 @@ export async function completeOnboarding(formData: z.infer<typeof onboardingSche
       await tx.insert(serviceCategories).values({
         organizationId: org.id,
         name: 'General',
+        slug: 'general',
       })
 
       // Seed default Business Hours (Mon-Fri 09:00-18:00, Sat-Sun Closed)
